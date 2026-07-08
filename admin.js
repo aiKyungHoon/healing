@@ -220,10 +220,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModal = () => {
     dialog.classList.remove('show');
     backdrop.classList.remove('show');
+    if (dialog.open) dialog.close();
   };
   
   closeBtn.addEventListener('click', closeModal);
   backdrop.addEventListener('click', closeModal);
+  dialog.addEventListener('close', () => {
+    dialog.classList.remove('show');
+    backdrop.classList.remove('show');
+  });
 });
 
 // Load submissions database from localStorage (or auto-seed)
@@ -444,15 +449,14 @@ window.openDetailModal = function(id) {
   const answersBox = document.getElementById('modal-answers-container');
   answersBox.innerHTML = buildDiagnosisAnswerBlocks(sub);
 
-  if (sub.resultSnapshot || sub.resultKey) {
-    answersBox.innerHTML += buildResultBlock(sub);
-  }
+  answersBox.innerHTML += buildResultBlock(sub);
   
   // Dynamically set CSS variables in dialog wrapper to match thematic color of submission
   const dynamicThemeHues = { 'will': '258', 'mood': '30', 'aroma': '125' };
   dialog.style.setProperty('--primary', `hsl(${dynamicThemeHues[sub.purpose]}, 50%, 55%)`);
   
   // Show elements
+  if (!dialog.open) dialog.show();
   dialog.classList.add('show');
   backdrop.classList.add('show');
 };
@@ -498,9 +502,9 @@ function buildDiagnosisAnswerBlocks(sub) {
 }
 
 function buildResultBlock(sub) {
-  const result = sub.resultSnapshot || {};
-  const title = result.name ? `${result.emoji || ''} ${result.name}` : `결과 코드 ${sub.resultKey || '-'}`;
-  const desc = result.desc || '이전 버전에서 저장된 신청이라 상세 결과 설명 스냅샷이 없습니다.';
+  const result = getSubmissionResult(sub);
+  const title = `${result.emoji || ''} ${result.name}`;
+  const desc = result.desc;
   const kits = Array.isArray(result.kits) && result.kits.length
     ? `<div style="margin-top:10px;color:#fff;">${result.kits.map(k => `${k.emoji || '•'} ${escapeHTML(k.title || '')} - ${escapeHTML(k.desc || '')}`).join('<br>')}</div>`
     : '';
@@ -511,6 +515,55 @@ function buildResultBlock(sub) {
       <div class="dialog-q-val" style="color:#fff;"><strong>${escapeHTML(title)}</strong><br>${escapeHTML(desc)}${kits}</div>
     </div>
   `;
+}
+
+function getSubmissionResult(sub) {
+  if (sub.resultSnapshot?.name) return sub.resultSnapshot;
+
+  const service = SERVICE_KOREAN[sub.purpose] || '힐링 진단';
+  const answers = sub.answers || {};
+  const topAnswers = Object.entries(answers)
+    .slice(0, 3)
+    .map(([key, value]) => formatAnswerValue(value, sub.purpose, key))
+    .filter(Boolean)
+    .join(', ');
+
+  const fallback = {
+    will: {
+      emoji: '📖',
+      name: '기록형 성찰가',
+      desc: `선택하신 답변(${topAnswers || '미응답'})을 기준으로 보면, 지금 가장 중요한 것은 마음속에 남아 있던 말과 관계의 의미를 차분히 기록하는 과정입니다. 유언 프로젝트는 마지막을 상상하는 방식으로 오늘의 우선순위를 다시 세우도록 돕습니다.`,
+      kits: [
+        { emoji: '📜', title: '성찰 기록지', desc: '마지막 한마디와 남기고 싶은 마음을 정리하는 기록 카드' },
+        { emoji: '🖊️', title: '메시지 펜 키트', desc: '소중한 사람에게 전할 문장을 남기는 필기 키트' }
+      ]
+    },
+    mood: {
+      emoji: '🌤️',
+      name: '감정 공간 조율자',
+      desc: `선택하신 답변(${topAnswers || '미응답'})을 기준으로 보면, 현재 마음은 조도와 색감, 소리 같은 공간 감각의 영향을 크게 받는 상태입니다. 무드 진단은 나에게 맞는 쉼의 환경을 찾아 감정 회복의 조건을 정리해줍니다.`,
+      kits: [
+        { emoji: '💡', title: '무드 조명 가이드', desc: '선호 조도에 맞춘 공간 연출 카드' },
+        { emoji: '🎨', title: '감정 컬러 카드', desc: '오늘의 기분에 맞는 컬러 처방 엽서' }
+      ]
+    },
+    aroma: {
+      emoji: '🌿',
+      name: '오감 독서 몰입가',
+      desc: `선택하신 답변(${topAnswers || '미응답'})을 기준으로 보면, 향과 독서가 결합될 때 더 깊게 몰입하고 회복하는 유형입니다. 아로마 북 테라피는 선호 장르와 향 계열을 연결해 나만의 독서 루틴을 만들어줍니다.`,
+      kits: [
+        { emoji: '📚', title: '독서 큐레이션 카드', desc: '선호 장르 기반 독서 가이드' },
+        { emoji: '🧴', title: '아로마 롤온 샘플', desc: '독서 몰입을 돕는 향기 처방 키트' }
+      ]
+    }
+  };
+
+  return fallback[sub.purpose] || {
+    emoji: '✨',
+    name: `${service} 분석 결과`,
+    desc: `선택하신 답변(${topAnswers || '미응답'})을 기준으로 생성한 힐링 분석 결과입니다.`,
+    kits: []
+  };
 }
 
 function buildInterviewResult(entry) {
@@ -548,15 +601,15 @@ window.downloadSubmissionPDF = function(id) {
   const sub = getDiagnosisSubmissions().find(s => String(s.id) === String(id));
   if (!sub) return;
 
-  const result = sub.resultSnapshot || {};
+  const result = getSubmissionResult(sub);
   const answerSections = Object.entries(DIAGNOSIS_QUESTION_LABELS[sub.purpose] || {}).map(([key, label], idx) => ({
     title: `Q${idx + 1}. ${label}`,
     html: `<p class="pr-a">${escapeHTML(formatAnswerValue(sub.answers?.[key] || '미응답', sub.purpose, key))}</p>`
   }));
 
   const resultHtml = `
-    <p><strong>${escapeHTML(result.name ? `${result.emoji || ''} ${result.name}` : `결과 코드 ${sub.resultKey || '-'}`)}</strong></p>
-    <p>${escapeHTML(result.desc || '이전 버전에서 저장된 신청이라 상세 결과 설명 스냅샷이 없습니다.')}</p>
+    <p><strong>${escapeHTML(`${result.emoji || ''} ${result.name}`)}</strong></p>
+    <p>${escapeHTML(result.desc)}</p>
     ${Array.isArray(result.kits) && result.kits.length ? `<p>${result.kits.map(k => `${k.emoji || '•'} ${escapeHTML(k.title || '')} - ${escapeHTML(k.desc || '')}`).join('<br>')}</p>` : ''}
   `;
 
@@ -692,6 +745,7 @@ window.openInterviewDetail = function(id) {
     `).join('')}
   `;
 
+  if (!dialog.open) dialog.show();
   dialog.classList.add('show');
   backdrop.classList.add('show');
 };
