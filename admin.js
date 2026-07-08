@@ -855,7 +855,7 @@ window.downloadInterviewPDFAdmin = function(id) {
       ['만족도', entry.rating ? '★'.repeat(entry.rating) + '☆'.repeat(5 - entry.rating) : '-']
     ],
     sections: [
-      { title: result.title, type: 'result', html: `<p>${escapeHTML(result.desc)}</p>` },
+      { title: result.title, type: 'interview-result', html: `<p>${escapeHTML(result.desc)}</p>` },
       ...Object.entries(INTERVIEW_QUESTION_LABELS).map(([key, label], idx) => ({
         title: `Q${idx + 1}. ${label}`,
         html: `<p class="pr-a">${escapeHTML(entry[key]?.trim() || '미응답')}</p>`
