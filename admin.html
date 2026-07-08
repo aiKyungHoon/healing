@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 대시보드 - Healing. 신청 현황</title>
+  <!-- Google Fonts: Outfit, Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Custom CSS for Admin Dashboard -->
+  <style>
+    /* Admin specific layout extensions */
+    .admin-body {
+      background-color: #0b0c10;
+      color: #e2e8f0;
+    }
+    
+    .admin-container {
+      max-width: 1300px;
+      margin: 80px auto 0;
+      padding: 40px 24px;
+    }
+    
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 24px;
+    }
+    
+    .admin-title h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #fff;
+    }
+    
+    .admin-title p {
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .stat-card {
+      background: rgba(22, 24, 34, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--border-radius-lg);
+      padding: 28px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+    
+    .stat-card-title {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .stat-card-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 10px;
+      font-family: 'Outfit', sans-serif;
+    }
+    
+    .stat-card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Visual Analytics Row */
+    .analytics-row {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .analytics-card {
+      background: rgba(22, 24, 34, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+    }
+    
+    .analytics-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #fff;
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+    }
+
+    /* Chart wrappers */
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 220px;
+    }
+    
+    .chart-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      padding-left: 20px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+    
+    .legend-color-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .dot-will { background-color: #8b5cf6; }
+    .dot-mood { background-color: #f59e0b; }
+    .dot-aroma { background-color: #10b981; }
+
+    /* SVG Doughnut Styling */
+    .donut-chart-svg {
+      transform: rotate(-90deg);
+    }
+    
+    .donut-segment {
+      fill: none;
+      stroke-width: 12px;
+      transition: stroke-dasharray 0.5s ease;
+    }
+    
+    .donut-hole {
+      fill: transparent;
+    }
+    
+    .donut-ring {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.04);
+      stroke-width: 12px;
+    }
+
+    /* Age Bar Chart Grid */
+    .bar-chart-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 180px;
+      padding: 0 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 12px;
+    }
+    
+    .bar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-grow: 1;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    
+    .bar-fill {
+      width: 28px;
+      background: linear-gradient(180deg, var(--primary), rgba(99, 102, 241, 0.2));
+      border-radius: 6px 6px 0 0;
+      transition: height 0.6s ease;
+      position: relative;
+    }
+    
+    .bar-fill:hover {
+      filter: brightness(1.2);
+    }
+    
+    .bar-value {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    
+    .bar-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Dashboard Controls / Toolbar */
+    .dashboard-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(22, 24, 34, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--border-radius-md);
+      padding: 16px 24px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    .filter-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    
+    .filter-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+    
+    .search-input-wrapper {
+      position: relative;
+      width: 260px;
+    }
+    
+    .search-input {
+      width: 100%;
+      background-color: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius-md);
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+    
+    .action-group {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .admin-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+    
+    .btn-mock {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .btn-mock:hover {
+      background-color: #10b981;
+      color: #fff;
+    }
+    
+    .btn-export {
+      background-color: rgba(255,255,255,0.06);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .btn-export:hover {
+      background-color: rgba(255,255,255,0.12);
+    }
+    
+    .btn-clear {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .btn-clear:hover {
+      background-color: #ef4444;
+      color: #fff;
+    }
+
+    /* Submissions Table */
+    .table-container {
+      background: rgba(22, 24, 34, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--border-radius-lg);
+      overflow-x: auto;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      margin-bottom: 40px;
+    }
+    
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    
+    .admin-table th, .admin-table td {
+      padding: 18px 24px;
+      font-size: 0.92rem;
+    }
+    
+    .admin-table th {
+      background-color: rgba(0, 0, 0, 0.2);
+      font-weight: 700;
+      color: #fff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .admin-table tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background-color 0.2s;
+    }
+    
+    .admin-table tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+    
+    .table-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    
+    .table-badge.will-bg { background-color: rgba(139, 92, 246, 0.15); color: #c4b5fd; }
+    .table-badge.mood-bg { background-color: rgba(245, 158, 11, 0.15); color: #fde68a; }
+    .table-badge.aroma-bg { background-color: rgba(16, 185, 129, 0.15); color: #a7f3d0; }
+    
+    .btn-tbl-view {
+      background-color: var(--primary-glow);
+      color: #818cf8;
+      border: 1px solid rgba(129, 140, 248, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .btn-tbl-view:hover {
+      background-color: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    
+    .btn-tbl-del {
+      background-color: rgba(239, 68, 68, 0.08);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.15);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      margin-left: 6px;
+    }
+    .btn-tbl-del:hover {
+      background-color: #ef4444;
+      color: #fff;
+      border-color: #ef4444;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 0;
+      color: var(--text-muted);
+    }
+    
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      stroke: rgba(255, 255, 255, 0.15);
+      margin-bottom: 16px;
+    }
+
+    /* Modal / Dialog */
+    .detail-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      width: 90%;
+      max-width: 600px;
+      background: #14151f;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius-lg);
+      color: #fff;
+      padding: 40px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1100;
+    }
+    
+    .detail-dialog.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1050;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    
+    .dialog-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .dialog-header h3 {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+    
+    .dialog-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+    .dialog-close-btn:hover {
+      color: #fff;
+    }
+    
+    .dialog-section-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+    
+    .dialog-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+      background-color: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--border-radius-md);
+      padding: 16px;
+    }
+    
+    .meta-box h5 {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    
+    .meta-box p {
+      font-weight: 600;
+    }
+    
+    .dialog-q-box {
+      margin-bottom: 20px;
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: var(--border-radius-md);
+      border-left: 4px solid var(--primary);
+    }
+    
+    .dialog-q-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .dialog-q-val {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .analytics-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .dashboard-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-input-wrapper {
+        width: 100%;
+      }
+      .action-group {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <a href="index.html" class="logo">
+        <span class="logo-text">Healing<span class="logo-dot">.</span></span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html">메인 폼랜딩으로 돌아가기</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="admin-container">
+    
+    <!-- Title Area -->
+    <div class="admin-header">
+      <div class="admin-title">
+        <h1>관리자 콘솔</h1>
+        <p>힐링 체험 프로그램 신청 메이트 데이터를 실시간으로 모니터링합니다.</p>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="stats-grid">
+      <!-- Total Submissions -->
+      <div class="stat-card">
+        <div class="stat-card-title">총 신청자</div>
+        <div class="stat-card-value" id="stat-total">0</div>
+        <div class="stat-card-desc">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg>
+          <span style="color: #10b981; font-weight:700;">실시간 업데이트</span>
+        </div>
+      </div>
+      <!-- Service: Will -->
+      <div class="stat-card">
+        <div class="stat-card-title">유언 프로젝트</div>
+        <div class="stat-card-value" id="stat-will">0</div>
+        <div class="stat-card-desc">
+          <span class="color-dot dot-will"></span>
+          <span>삶의 마지막 가치 성찰</span>
+        </div>
+      </div>
+      <!-- Service: Mood -->
+      <div class="stat-card">
+        <div class="stat-card-title">무드 진단</div>
+        <div class="stat-card-value" id="stat-mood">0</div>
+        <div class="stat-card-desc">
+          <span class="color-dot dot-mood"></span>
+          <span>색과 조도로 찾는 내면의 방</span>
+        </div>
+      </div>
+      <!-- Service: Aroma -->
+      <div class="stat-card">
+        <div class="stat-card-title">아로마 북 테라피</div>
+        <div class="stat-card-value" id="stat-aroma">0</div>
+        <div class="stat-card-desc">
+          <span class="color-dot dot-aroma"></span>
+          <span>향기와 텍스트의 오감독서</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Charts Row -->
+    <div class="analytics-row">
+      <!-- Doughnut Chart (Service Share) -->
+      <div class="analytics-card">
+        <h3>서비스별 관심도 분포</h3>
+        <div style="display: flex; align-items:center;">
+          <div class="chart-container" style="flex: 1;">
+            <svg width="180" height="180" class="donut-chart-svg">
+              <circle class="donut-hole" cx="90" cy="90" r="70"></circle>
+              <circle class="donut-ring" cx="90" cy="90" r="70"></circle>
+              <!-- Segments will be drawn dynamically via script -->
+              <circle class="donut-segment segment-will" cx="90" cy="90" r="70" stroke="#8b5cf6" stroke-dasharray="0 440" stroke-dashoffset="0"></circle>
+              <circle class="donut-segment segment-mood" cx="90" cy="90" r="70" stroke="#f59e0b" stroke-dasharray="0 440" stroke-dashoffset="0"></circle>
+              <circle class="donut-segment segment-aroma" cx="90" cy="90" r="70" stroke="#10b981" stroke-dasharray="0 440" stroke-dashoffset="0"></circle>
+            </svg>
+          </div>
+          <div class="chart-legend" style="flex: 1.2;">
+            <div class="legend-item">
+              <div class="legend-color-label">
+                <span class="color-dot dot-will"></span>
+                <span>유언 프로젝트</span>
+              </div>
+              <span id="percent-will" style="font-weight: 700; font-family:'Outfit';">0%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color-label">
+                <span class="color-dot dot-mood"></span>
+                <span>무드 진단</span>
+              </div>
+              <span id="percent-mood" style="font-weight: 700; font-family:'Outfit';">0%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color-label">
+                <span class="color-dot dot-aroma"></span>
+                <span>아로마 북 테라피</span>
+              </div>
+              <span id="percent-aroma" style="font-weight: 700; font-family:'Outfit';">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart (Age Distribution) -->
+      <div class="analytics-card">
+        <h3>신청 나이 분포 (20세 ~ 27세)</h3>
+        <div class="bar-chart-container" id="bar-chart-container">
+          <!-- Bars will be generated dynamically -->
+          <div class="bar-col"><div class="bar-fill" style="height: 0%;" data-age="20"><span class="bar-value">0</span></div><span class="bar-label">20세</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 0%;" data-age="21"><span class="bar-value">0</span></div><span class="bar-label">21세</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 0%;" data-age="22"><span class="bar-value">0</span></div><span class="bar-label">22세</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 0%;" data-age="23"><span class="bar-value">0</span></div><span class="bar-label">23세</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 0%;" data-age="24"><span class="bar-value">0</span></div><span class="bar-label">24세</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 0%;" data-age="25"><span class="bar-value">0</span></div><span class="bar-label">25세</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 0%;" data-age="26"><span class="bar-value">0</span></div><span class="bar-label">26세</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 0%;" data-age="27"><span class="bar-value">0</span></div><span class="bar-label">27세</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar controls -->
+    <div class="dashboard-toolbar">
+      <!-- Filtering Options -->
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">전체보기</button>
+        <button class="filter-btn" data-filter="will">유언 프로젝트</button>
+        <button class="filter-btn" data-filter="mood">무드 진단</button>
+        <button class="filter-btn" data-filter="aroma">아로마 북 테라피</button>
+        <a href="interview.html" class="filter-btn" style="text-decoration:none;background:rgba(14,165,233,0.12);border-color:rgba(14,165,233,0.3);color:#7dd3fc;">🎙️ 인터뷰 페이지</a>
+      </div>
+
+      <!-- Search Box -->
+      <div class="search-input-wrapper">
+        <input type="text" class="search-input" id="search-box" placeholder="이름 또는 연락처 검색...">
+      </div>
+
+      <!-- Utilities Action buttons -->
+      <div class="action-group">
+        <button class="admin-action-btn btn-mock" id="btn-seed-mock">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Mock 데이터 생성
+        </button>
+        <button class="admin-action-btn btn-export" id="btn-export-csv">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          CSV 다운로드
+        </button>
+        <button class="admin-action-btn btn-clear" id="btn-clear-db">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          전체 비우기
+        </button>
+      </div>
+    </div>
+
+    <!-- Data Table Container -->
+    <div class="table-container">
+      <table class="admin-table" id="submissions-table">
+        <thead>
+          <tr>
+            <th>신청일시</th>
+            <th>이름</th>
+            <th>나이</th>
+            <th>연락처</th>
+            <th>참여 서비스</th>
+            <th>설문 응답 정보</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Rows will be rendered dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Interview Map Entries Section -->
+    <div style="margin-top:40px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h2 style="font-size:1.2rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;">🎙️ 인터뷰 참여자 <span id="map-entry-count" style="font-size:0.8rem;font-weight:600;background:rgba(14,165,233,0.15);border:1px solid rgba(14,165,233,0.3);color:#7dd3fc;padding:3px 10px;border-radius:999px;">0명</span></h2>
+        <a href="interview.html" style="font-size:0.82rem;font-weight:600;color:#7dd3fc;text-decoration:none;padding:7px 14px;border-radius:999px;background:rgba(14,165,233,0.12);border:1px solid rgba(14,165,233,0.3);">인터뷰 페이지 →</a>
+      </div>
+      <div class="table-container">
+        <table class="admin-table" id="map-entries-table">
+          <thead>
+            <tr>
+              <th>등록일시</th>
+              <th>이름</th>
+              <th>만족도</th>
+              <th>참여 서비스</th>
+              <th>인터뷰 내용</th>
+            </tr>
+          </thead>
+          <tbody id="map-entries-body">
+            <tr><td colspan="5" style="text-align:center;color:#5a5869;padding:24px;">아직 등록된 인터뷰가 없습니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Backdrop for Detail Dialog -->
+  <div class="dialog-backdrop" id="dialog-backdrop"></div>
+
+  <!-- Detail Dialog Popup -->
+  <dialog class="detail-dialog" id="detail-dialog">
+    <div class="dialog-header">
+      <h3>신청 정보 세부 정보</h3>
+      <button class="dialog-close-btn" id="dialog-close-btn">&times;</button>
+    </div>
+    
+    <div class="dialog-meta-grid">
+      <div class="meta-box">
+        <h5>성명 / 나이</h5>
+        <p><span id="modal-name">홍길동</span> (<span id="modal-age">24</span>세)</p>
+      </div>
+      <div class="meta-box">
+        <h5>연락처</h5>
+        <p id="modal-phone">010-1234-5678</p>
+      </div>
+      <div class="meta-box">
+        <h5>신청 일시</h5>
+        <p id="modal-date" style="font-size: 0.8rem; word-break: break-all;">2026-07-08</p>
+      </div>
+    </div>
+
+    <div class="dialog-section-title">선택한 프로그램</div>
+    <div style="margin-bottom: 24px;">
+      <span class="table-badge" id="modal-badge">아로마 북 테라피</span>
+    </div>
+
+    <div class="dialog-section-title">프로젝트 사전 질문 응답</div>
+    <div id="modal-answers-container">
+      <!-- Dynamic questions output -->
+      <div class="dialog-q-box">
+        <div class="dialog-q-label">Q1. 내일 죽는다면 소중한 사람에게 할 말은?</div>
+        <div class="dialog-q-val" id="modal-q1">응답 내용</div>
+      </div>
+      <div class="dialog-q-box">
+        <div class="dialog-q-label">Q2. 장례식장에 어울리는 음악 장르는?</div>
+        <div class="dialog-q-val" id="modal-q2">응답 내용</div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-logo">Healing. Console</div>
+      <p class="footer-copy">© 2026 Healing Admin Dashboard. 본 페이지는 신청 현황 모니터링 관리 전용입니다.</p>
+    </div>
+  </footer>
+
+  <script src="admin.js"></script>
+</body>
+</html>

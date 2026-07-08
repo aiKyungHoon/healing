@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Healing. — 나만을 위한 힐링 진단 & 처방</title>
+  <meta name="description" content="20-27세 MZ를 위한 유언 프로젝트, 무드 진단, 아로마 북 테라피 체험단. 당신의 응답을 분석해 맞춤 힐링 처방전을 드립니다.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="default" class="fullscreen-form-body">
+
+  <div class="bg-glow-orb orb-1"></div>
+  <div class="bg-glow-orb orb-2"></div>
+
+  <main class="form-viewport" id="form-viewport">
+    <div class="form-glass-card" id="form-glass-card">
+
+      <!-- Progress Bar -->
+      <div class="form-progress-wrapper" id="progress-wrapper" style="display:none;">
+        <div class="progress-bar-container">
+          <div class="progress-line">
+            <div class="progress-line-fill" id="progress-fill" style="width:0%;"></div>
+          </div>
+          <div class="progress-steps">
+            <div class="step-indicator" data-step="1"><span class="step-num">1</span><span class="step-label">목적</span></div>
+            <div class="step-indicator" data-step="2"><span class="step-num">2</span><span class="step-label">질문</span></div>
+            <div class="step-indicator" data-step="3"><span class="step-num">3</span><span class="step-label">결과</span></div>
+            <div class="step-indicator" data-step="4"><span class="step-num">4</span><span class="step-label">신청</span></div>
+            <div class="step-indicator" data-step="5"><span class="step-num">5</span><span class="step-label">정보</span></div>
+            <div class="step-indicator" data-step="6"><span class="step-num">6</span><span class="step-label">동의</span></div>
+          </div>
+        </div>
+      </div>
+
+      <form id="healing-form" novalidate>
+
+        <!-- ===== STEP START: 온보딩 스플래시 ===== -->
+        <div class="form-step active" id="step-start">
+          <div class="splash-content">
+            <div class="splash-badge">✦ 20-27세 MZ 마인드 웰니스 ✦</div>
+            <h1 class="splash-title">나를 위한<br><span class="highlight-text">힐링 진단서</span></h1>
+            <p class="splash-subtitle">복잡한 일상에서 잠시 벗어나<br>나만을 위한 맞춤 처방을 받아보세요.</p>
+
+            <div class="splash-5w1h-card">
+              <div class="splash-5w1h-grid">
+                <div class="splash-5w1h-item"><span class="item-w">누가</span><span class="item-c">20-27세 청년</span></div>
+                <div class="splash-5w1h-item"><span class="item-w">언제</span><span class="item-c">쉼이 필요할 때</span></div>
+                <div class="splash-5w1h-item"><span class="item-w">어디서</span><span class="item-c">나만의 사적 공간</span></div>
+                <div class="splash-5w1h-item"><span class="item-w">무엇을</span><span class="item-c">유언 · 무드 · 아로마</span></div>
+                <div class="splash-5w1h-item"><span class="item-w">왜</span><span class="item-c">내면을 단단히 하러</span></div>
+                <div class="splash-5w1h-item"><span class="item-w">어떻게</span><span class="item-c">오감 처방 키트</span></div>
+              </div>
+            </div>
+
+            <div class="splash-testimonial-box">
+              <p class="t-text">"아로마 향 오일과 함께 지정 도서를 읽으니 온전히 활자에 몰입되어 머릿속이 맑아졌어요."</p>
+              <p class="t-author">김*우 <span class="t-info">· 27세 / 아로마 북 테라피</span></p>
+            </div>
+
+            <div class="splash-action">
+              <button type="button" class="start-btn-cta" onclick="startSurvey()">
+                힐링 진단 시작하기
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+              <a href="interview.html" class="map-link-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                힐링 인터뷰 참여하기
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== STEP 1: 목적 선택 ===== -->
+        <div class="form-step" id="step-purpose">
+          <h3 class="step-title">어떤 힐링을 원하시나요?</h3>
+          <p class="step-subtitle">참여하고 싶은 힐링 프로젝트를 선택해 주세요.</p>
+
+          <div class="purpose-grid">
+
+            <!-- 유언 프로젝트 -->
+            <label class="purpose-card" for="purpose-will">
+              <input type="radio" name="participationPurpose" id="purpose-will" value="will" required>
+              <div class="card-content">
+                <div class="card-visual visual-will">
+                  <svg viewBox="0 0 240 130" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="240" height="130" fill="#1a1330"/>
+                    <rect x="34" y="18" width="16" height="42" rx="2" fill="#a78bfa"/><rect x="52" y="12" width="13" height="48" rx="2" fill="#7c3aed"/><rect x="67" y="22" width="18" height="38" rx="2" fill="#c4b5fd"/><rect x="87" y="14" width="12" height="46" rx="2" fill="#8b5cf6"/><rect x="101" y="20" width="16" height="40" rx="2" fill="#a78bfa"/><rect x="119" y="12" width="14" height="48" rx="2" fill="#7c3aed"/><rect x="135" y="22" width="18" height="38" rx="2" fill="#c4b5fd"/><rect x="155" y="16" width="12" height="44" rx="2" fill="#8b5cf6"/><rect x="169" y="20" width="16" height="40" rx="2" fill="#a78bfa"/><rect x="187" y="14" width="14" height="46" rx="2" fill="#7c3aed"/>
+                    <rect x="30" y="60" width="180" height="6" rx="3" fill="#e9ddff" opacity="0.55"/>
+                    <rect x="40" y="74" width="14" height="40" rx="2" fill="#8b5cf6"/><rect x="56" y="80" width="18" height="34" rx="2" fill="#c4b5fd"/><rect x="76" y="72" width="12" height="42" rx="2" fill="#7c3aed"/><rect x="90" y="78" width="16" height="36" rx="2" fill="#a78bfa"/><rect x="108" y="74" width="14" height="40" rx="2" fill="#8b5cf6"/><rect x="124" y="80" width="18" height="34" rx="2" fill="#c4b5fd"/><rect x="144" y="72" width="12" height="42" rx="2" fill="#7c3aed"/><rect x="158" y="78" width="16" height="36" rx="2" fill="#a78bfa"/><rect x="176" y="74" width="14" height="40" rx="2" fill="#8b5cf6"/>
+                    <rect x="30" y="114" width="180" height="6" rx="3" fill="#e9ddff" opacity="0.55"/>
+                  </svg>
+                </div>
+                <div class="card-badge badge-will">📖 유언 텍스트 프로젝트</div>
+                <h4 class="card-title">유언 프로젝트</h4>
+                <p class="card-desc">삶의 마지막을 가정하고 자신을 되돌아봅니다. 사랑하는 사람에게 보내는 메시지 작성과 장례식 플레이리스트 선곡을 통해 오늘 하루를 더 소중히 여기는 깊은 성찰의 시간입니다.</p>
+                <a href="https://www.instagram.com/hanjang.page?igsh=MWhhbWh1bXA2bnplbg==" target="_blank" rel="noopener" class="insta-badge" onclick="event.stopPropagation();">
+                  <svg class="insta-icon" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="url(#ig1)" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="url(#ig2)" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="url(#ig3)"/><defs><linearGradient id="ig1" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset=".25" stop-color="#e6683c"/><stop offset=".5" stop-color="#dc2743"/><stop offset=".75" stop-color="#cc2366"/><stop offset="1" stop-color="#bc1888"/></linearGradient><linearGradient id="ig2" x1="7.5" y1="7.5" x2="16.5" y2="16.5" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset="1" stop-color="#bc1888"/></linearGradient><linearGradient id="ig3" x1="17" y1="6" x2="18" y2="7" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset="1" stop-color="#bc1888"/></linearGradient></defs></svg>
+                  @hanjang.page
+                </a>
+              </div>
+            </label>
+
+            <!-- 무드 진단 -->
+            <label class="purpose-card" for="purpose-mood">
+              <input type="radio" name="participationPurpose" id="purpose-mood" value="mood">
+              <div class="card-content">
+                <div class="card-visual visual-mood">
+                  <svg viewBox="0 0 240 130" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="240" height="130" fill="#2a1e08"/>
+                    <g fill="#fcd34d" opacity="0.85"><circle cx="150" cy="24" r="2.6"/><circle cx="163" cy="17" r="2"/><circle cx="172" cy="30" r="1.7"/><circle cx="158" cy="35" r="1.6"/><circle cx="178" cy="21" r="1.5"/><circle cx="145" cy="33" r="1.6"/></g>
+                    <rect x="112" y="30" width="16" height="10" rx="2" fill="#b45309"/><rect x="126" y="32" width="16" height="6" rx="2" fill="#d97706"/>
+                    <rect x="114" y="40" width="12" height="12" fill="#92400e"/>
+                    <rect x="94" y="52" width="52" height="64" rx="13" fill="url(#mgrad)"/>
+                    <rect x="103" y="64" width="15" height="28" rx="7" fill="#ffffff" opacity="0.28"/>
+                    <defs><linearGradient id="mgrad" x1="94" y1="52" x2="146" y2="116" gradientUnits="userSpaceOnUse"><stop stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient></defs>
+                  </svg>
+                </div>
+                <div class="card-badge badge-mood">🌤️ 무드인샵 진단</div>
+                <h4 class="card-title">무드 진단</h4>
+                <p class="card-desc">현재 나의 감정 상태와 어울리는 조도·색상·공간 분위기를 매핑합니다. 심층 감정 진단으로 지친 나에게 필요한 최적의 실내 환경과 인테리어 라이프스타일을 처방해 드립니다.</p>
+                <a href="https://www.instagram.com/mood.in.shop/" target="_blank" rel="noopener" class="insta-badge" onclick="event.stopPropagation();">
+                  <svg class="insta-icon" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="url(#ig4)" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="url(#ig5)" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="url(#ig6)"/><defs><linearGradient id="ig4" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset=".25" stop-color="#e6683c"/><stop offset=".5" stop-color="#dc2743"/><stop offset=".75" stop-color="#cc2366"/><stop offset="1" stop-color="#bc1888"/></linearGradient><linearGradient id="ig5" x1="7.5" y1="7.5" x2="16.5" y2="16.5" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset="1" stop-color="#bc1888"/></linearGradient><linearGradient id="ig6" x1="17" y1="6" x2="18" y2="7" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset="1" stop-color="#bc1888"/></linearGradient></defs></svg>
+                  @mood.in.shop
+                </a>
+              </div>
+            </label>
+
+            <!-- 아로마 북 테라피 -->
+            <label class="purpose-card" for="purpose-aroma">
+              <input type="radio" name="participationPurpose" id="purpose-aroma" value="aroma">
+              <div class="card-content">
+                <div class="card-visual visual-aroma">
+                  <svg viewBox="0 0 240 130" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="240" height="130" fill="#08251a"/>
+                    <path d="M120 34 C100 24 70 24 46 32 L46 100 C70 92 100 92 120 102 Z" fill="#34d399"/>
+                    <path d="M120 34 C140 24 170 24 194 32 L194 100 C170 92 140 92 120 102 Z" fill="#6ee7b7"/>
+                    <path d="M120 34 L120 102" stroke="#065f46" stroke-width="3"/>
+                    <g stroke="#065f46" stroke-width="2" opacity="0.5" stroke-linecap="round">
+                      <line x1="58" y1="45" x2="108" y2="43"/><line x1="58" y1="55" x2="108" y2="53"/><line x1="58" y1="65" x2="108" y2="63"/><line x1="58" y1="75" x2="100" y2="74"/>
+                      <line x1="132" y1="43" x2="182" y2="45"/><line x1="132" y1="53" x2="182" y2="55"/><line x1="132" y1="63" x2="182" y2="65"/><line x1="140" y1="74" x2="182" y2="75"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-badge badge-aroma">🌿 원페이지 테라피</div>
+                <h4 class="card-title">아로마 북 테라피 체험단</h4>
+                <p class="card-desc">에센셜 오일의 향기와 문학 텍스트를 감각적으로 매칭합니다. 도서 장르별 맞춤 아로마 롤온 오일과 독서 가이드 페이퍼 키트를 수령해 오감의 쉼을 경험하세요.</p>
+                <a href="https://www.instagram.com/hanjang.page?igsh=MWhhbWh1bXA2bnplbg==" target="_blank" rel="noopener" class="insta-badge" onclick="event.stopPropagation();">
+                  <svg class="insta-icon" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="url(#ig7)" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="url(#ig8)" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="url(#ig9)"/><defs><linearGradient id="ig7" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset=".25" stop-color="#e6683c"/><stop offset=".5" stop-color="#dc2743"/><stop offset=".75" stop-color="#cc2366"/><stop offset="1" stop-color="#bc1888"/></linearGradient><linearGradient id="ig8" x1="7.5" y1="7.5" x2="16.5" y2="16.5" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset="1" stop-color="#bc1888"/></linearGradient><linearGradient id="ig9" x1="17" y1="6" x2="18" y2="7" gradientUnits="userSpaceOnUse"><stop stop-color="#f09433"/><stop offset="1" stop-color="#bc1888"/></linearGradient></defs></svg>
+                  @hanjang.page
+                </a>
+              </div>
+            </label>
+
+          </div>
+
+          <div class="error-msg" id="purpose-error">참여 목적을 반드시 하나 선택해 주세요.</div>
+
+          <div class="form-navigation">
+            <button type="button" class="prev-btn" onclick="goBackToWelcome()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 처음으로
+            </button>
+            <button type="button" class="next-btn" onclick="goPurposeNext()">
+              다음 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 2: 체험 질문 (7문항) ===== -->
+        <div class="form-step" id="step-questions">
+          <div class="step-header-row">
+            <h3 class="step-title">체험 질문</h3>
+            <span class="question-count-badge" id="q-count-badge">7개 질문</span>
+          </div>
+          <p class="step-subtitle">솔직하게 답할수록 정확한 처방이 나옵니다.</p>
+
+          <!-- ========== 유언 프로젝트 질문 ========== -->
+          <div id="questions-will" class="service-question-group">
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 1</div>
+              <label class="question-label">만약 내일이 삶의 마지막이라면, 소중한 사람에게 남길 첫 한 마디는?</label>
+              <textarea id="will-q1" name="willQ1" class="form-control" placeholder="예: 곁에 있어줘서 언제나 고마웠어. 더 많이 표현하지 못해 미안해." rows="3"></textarea>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 2</div>
+              <label class="question-label">나의 장례식장에서 흐를 플레이리스트 장르는?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="will-q2-a"><input type="radio" name="willQ2" id="will-q2-a" value="classic"><span class="choice-emoji">🎻</span><span class="choice-text">클래식 / 뉴에이지</span></label>
+                <label class="choice-card" for="will-q2-b"><input type="radio" name="willQ2" id="will-q2-b" value="indie"><span class="choice-emoji">🎸</span><span class="choice-text">잔잔한 인디 발라드</span></label>
+                <label class="choice-card" for="will-q2-c"><input type="radio" name="willQ2" id="will-q2-c" value="pop"><span class="choice-emoji">🎉</span><span class="choice-text">밝고 신나는 팝</span></label>
+                <label class="choice-card" for="will-q2-d"><input type="radio" name="willQ2" id="will-q2-d" value="jazz"><span class="choice-emoji">🎷</span><span class="choice-text">재즈 / 블루스</span></label>
+                <label class="choice-card" for="will-q2-e"><input type="radio" name="willQ2" id="will-q2-e" value="custom"><span class="choice-emoji">🎼</span><span class="choice-text">내가 직접 선곡</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 3</div>
+              <label class="question-label">삶에서 가장 소중한 것은 무엇인가요?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="will-q3-a"><input type="radio" name="willQ3" id="will-q3-a" value="relationship"><span class="choice-emoji">🤝</span><span class="choice-text">사람과의 관계</span></label>
+                <label class="choice-card" for="will-q3-b"><input type="radio" name="willQ3" id="will-q3-b" value="moments"><span class="choice-emoji">✨</span><span class="choice-text">작은 순간들</span></label>
+                <label class="choice-card" for="will-q3-c"><input type="radio" name="willQ3" id="will-q3-c" value="freedom"><span class="choice-emoji">🌊</span><span class="choice-text">자유와 여행</span></label>
+                <label class="choice-card" for="will-q3-d"><input type="radio" name="willQ3" id="will-q3-d" value="records"><span class="choice-emoji">📖</span><span class="choice-text">기록과 흔적</span></label>
+                <label class="choice-card" for="will-q3-e"><input type="radio" name="willQ3" id="will-q3-e" value="achievement"><span class="choice-emoji">🔥</span><span class="choice-text">나의 성취</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 4</div>
+              <label class="question-label">가장 표현하지 못했던 감정은 무엇인가요?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="will-q4-a"><input type="radio" name="willQ4" id="will-q4-a" value="love"><span class="choice-emoji">❤️</span><span class="choice-text">사랑한다는 말</span></label>
+                <label class="choice-card" for="will-q4-b"><input type="radio" name="willQ4" id="will-q4-b" value="gratitude"><span class="choice-emoji">🙏</span><span class="choice-text">감사하다는 말</span></label>
+                <label class="choice-card" for="will-q4-c"><input type="radio" name="willQ4" id="will-q4-c" value="sorry"><span class="choice-emoji">💜</span><span class="choice-text">미안하다는 말</span></label>
+                <label class="choice-card" for="will-q4-d"><input type="radio" name="willQ4" id="will-q4-d" value="proud"><span class="choice-emoji">⭐</span><span class="choice-text">자랑스럽다는 말</span></label>
+                <label class="choice-card" for="will-q4-e"><input type="radio" name="willQ4" id="will-q4-e" value="courage"><span class="choice-emoji">🦁</span><span class="choice-text">용기를 내지 못한 것</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 5</div>
+              <label class="question-label">마지막 하루, 어떻게 보내고 싶으신가요?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="will-q5-a"><input type="radio" name="willQ5" id="will-q5-a" value="family"><span class="choice-emoji">🍽️</span><span class="choice-text">가족과 함께 식사</span></label>
+                <label class="choice-card" for="will-q5-b"><input type="radio" name="willQ5" id="will-q5-b" value="travel"><span class="choice-emoji">✈️</span><span class="choice-text">혼자 좋아하는 여행지로</span></label>
+                <label class="choice-card" for="will-q5-c"><input type="radio" name="willQ5" id="will-q5-c" value="write"><span class="choice-emoji">✍️</span><span class="choice-text">글쓰기와 기록으로</span></label>
+                <label class="choice-card" for="will-q5-d"><input type="radio" name="willQ5" id="will-q5-d" value="music"><span class="choice-emoji">🎵</span><span class="choice-text">음악 듣고 그림 그리며</span></label>
+                <label class="choice-card" for="will-q5-e"><input type="radio" name="willQ5" id="will-q5-e" value="volunteer"><span class="choice-emoji">🫶</span><span class="choice-text">낯선 이에게 봉사</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 6</div>
+              <label class="question-label">세상에 남기고 싶은 흔적은 무엇인가요?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="will-q6-a"><input type="radio" name="willQ6" id="will-q6-a" value="memory"><span class="choice-emoji">💭</span><span class="choice-text">누군가의 마음속 기억</span></label>
+                <label class="choice-card" for="will-q6-b"><input type="radio" name="willQ6" id="will-q6-b" value="work"><span class="choice-emoji">🎨</span><span class="choice-text">글 / 작품 / 창작물</span></label>
+                <label class="choice-card" for="will-q6-c"><input type="radio" name="willQ6" id="will-q6-c" value="influence"><span class="choice-emoji">🌱</span><span class="choice-text">내가 준 긍정적 영향</span></label>
+                <label class="choice-card" for="will-q6-d"><input type="radio" name="willQ6" id="will-q6-d" value="peace"><span class="choice-emoji">🕊️</span><span class="choice-text">조용한 평화</span></label>
+                <label class="choice-card" for="will-q6-e"><input type="radio" name="willQ6" id="will-q6-e" value="freedom"><span class="choice-emoji">🌈</span><span class="choice-text">자유로운 삶의 궤적</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 7</div>
+              <label class="question-label">삶의 끝에서 가장 후회할 것 같은 것은?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="will-q7-a"><input type="radio" name="willQ7" id="will-q7-a" value="unsaid"><span class="choice-emoji">💬</span><span class="choice-text">말 못한 감정들</span></label>
+                <label class="choice-card" for="will-q7-b"><input type="radio" name="willQ7" id="will-q7-b" value="challenge"><span class="choice-emoji">🚀</span><span class="choice-text">하지 못한 도전들</span></label>
+                <label class="choice-card" for="will-q7-c"><input type="radio" name="willQ7" id="will-q7-c" value="relations"><span class="choice-emoji">👥</span><span class="choice-text">소홀했던 관계들</span></label>
+                <label class="choice-card" for="will-q7-d"><input type="radio" name="willQ7" id="will-q7-d" value="moments"><span class="choice-emoji">⏳</span><span class="choice-text">흘려보낸 순간들</span></label>
+                <label class="choice-card" for="will-q7-e"><input type="radio" name="willQ7" id="will-q7-e" value="alone"><span class="choice-emoji">🌙</span><span class="choice-text">나만의 시간 부족</span></label>
+              </div>
+            </div>
+
+          </div><!-- /questions-will -->
+
+          <!-- ========== 무드 진단 질문 ========== -->
+          <div id="questions-mood" class="service-question-group">
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 1</div>
+              <label class="question-label">오늘 나의 기분을 '날씨'로 표현한다면?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="mood-q1-a"><input type="radio" name="moodQ1" id="mood-q1-a" value="sunny"><span class="choice-emoji">☀️</span><span class="choice-text">구름 한 점 없는 맑음</span></label>
+                <label class="choice-card" for="mood-q1-b"><input type="radio" name="moodQ1" id="mood-q1-b" value="cloudy"><span class="choice-emoji">⛅</span><span class="choice-text">차분하고 선선한 흐림</span></label>
+                <label class="choice-card" for="mood-q1-c"><input type="radio" name="moodQ1" id="mood-q1-c" value="rain"><span class="choice-emoji">🌧️</span><span class="choice-text">쓸쓸한 가을비</span></label>
+                <label class="choice-card" for="mood-q1-d"><input type="radio" name="moodQ1" id="mood-q1-d" value="fog"><span class="choice-emoji">🌫️</span><span class="choice-text">앞이 보이지 않는 안개</span></label>
+                <label class="choice-card" for="mood-q1-e"><input type="radio" name="moodQ1" id="mood-q1-e" value="sunshine"><span class="choice-emoji">🌤️</span><span class="choice-text">다정하게 부서지는 햇살</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 2</div>
+              <label class="question-label">하루를 마치고 방에 들어섰을 때 가장 편안한 조도는?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="mood-q2-a"><input type="radio" name="moodQ2" id="mood-q2-a" value="indirect"><span class="choice-emoji">🕯️</span><span class="choice-text">은은한 간접조명 (노을빛)</span></label>
+                <label class="choice-card" for="mood-q2-b"><input type="radio" name="moodQ2" id="mood-q2-b" value="spotlight"><span class="choice-emoji">💡</span><span class="choice-text">포근한 스탠드 스팟</span></label>
+                <label class="choice-card" for="mood-q2-c"><input type="radio" name="moodQ2" id="mood-q2-c" value="natural"><span class="choice-emoji">🌿</span><span class="choice-text">창문으로 스며드는 자연광</span></label>
+                <label class="choice-card" for="mood-q2-d"><input type="radio" name="moodQ2" id="mood-q2-d" value="dark"><span class="choice-emoji">🌑</span><span class="choice-text">완전한 암막 어둠</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 3</div>
+              <label class="question-label">지금 가장 필요한 감정 보충제는 무엇인가요?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="mood-q3-a"><input type="radio" name="moodQ3" id="mood-q3-a" value="energy"><span class="choice-emoji">⚡</span><span class="choice-text">에너지와 활력</span></label>
+                <label class="choice-card" for="mood-q3-b"><input type="radio" name="moodQ3" id="mood-q3-b" value="connection"><span class="choice-emoji">🫂</span><span class="choice-text">포근한 연결감</span></label>
+                <label class="choice-card" for="mood-q3-c"><input type="radio" name="moodQ3" id="mood-q3-c" value="ventilation"><span class="choice-emoji">💨</span><span class="choice-text">가벼운 환기</span></label>
+                <label class="choice-card" for="mood-q3-d"><input type="radio" name="moodQ3" id="mood-q3-d" value="calm"><span class="choice-emoji">🧘</span><span class="choice-text">깊은 고요와 안정</span></label>
+                <label class="choice-card" for="mood-q3-e"><input type="radio" name="moodQ3" id="mood-q3-e" value="comfort"><span class="choice-emoji">🫶</span><span class="choice-text">감성적 위로</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 4</div>
+              <label class="question-label">쉬고 싶을 때 가고 싶은 공간은?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="mood-q4-a"><input type="radio" name="moodQ4" id="mood-q4-a" value="nature"><span class="choice-emoji">🌲</span><span class="choice-text">자연 속 숲 / 바다</span></label>
+                <label class="choice-card" for="mood-q4-b"><input type="radio" name="moodQ4" id="mood-q4-b" value="room"><span class="choice-emoji">🛋️</span><span class="choice-text">아늑한 나만의 방</span></label>
+                <label class="choice-card" for="mood-q4-c"><input type="radio" name="moodQ4" id="mood-q4-c" value="cafe"><span class="choice-emoji">☕</span><span class="choice-text">조용한 카페 구석자리</span></label>
+                <label class="choice-card" for="mood-q4-d"><input type="radio" name="moodQ4" id="mood-q4-d" value="empty"><span class="choice-emoji">🌌</span><span class="choice-text">아무것도 없는 빈 공간</span></label>
+                <label class="choice-card" for="mood-q4-e"><input type="radio" name="moodQ4" id="mood-q4-e" value="people"><span class="choice-emoji">🫂</span><span class="choice-text">사랑하는 사람 옆</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 5</div>
+              <label class="question-label">지금 배경으로 깔고 싶은 사운드는?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="mood-q5-a"><input type="radio" name="moodQ5" id="mood-q5-a" value="rain"><span class="choice-emoji">🌧️</span><span class="choice-text">빗소리 / 파도소리</span></label>
+                <label class="choice-card" for="mood-q5-b"><input type="radio" name="moodQ5" id="mood-q5-b" value="jazz"><span class="choice-emoji">🎷</span><span class="choice-text">잔잔한 재즈 / 클래식</span></label>
+                <label class="choice-card" for="mood-q5-c"><input type="radio" name="moodQ5" id="mood-q5-c" value="silence"><span class="choice-emoji">🔇</span><span class="choice-text">완전한 침묵</span></label>
+                <label class="choice-card" for="mood-q5-d"><input type="radio" name="moodQ5" id="mood-q5-d" value="lofi"><span class="choice-emoji">🎧</span><span class="choice-text">Lo-fi 음악</span></label>
+                <label class="choice-card" for="mood-q5-e"><input type="radio" name="moodQ5" id="mood-q5-e" value="wind"><span class="choice-emoji">🍃</span><span class="choice-text">자연의 바람소리</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 6</div>
+              <label class="question-label">요즘 나를 가장 지치게 하는 것은?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="mood-q6-a"><input type="radio" name="moodQ6" id="mood-q6-a" value="people"><span class="choice-emoji">😮‍💨</span><span class="choice-text">복잡한 인간관계</span></label>
+                <label class="choice-card" for="mood-q6-b"><input type="radio" name="moodQ6" id="mood-q6-b" value="tasks"><span class="choice-emoji">📋</span><span class="choice-text">끝없는 할 일 목록</span></label>
+                <label class="choice-card" for="mood-q6-c"><input type="radio" name="moodQ6" id="mood-q6-c" value="anxiety"><span class="choice-emoji">🌀</span><span class="choice-text">앞이 보이지 않는 불안</span></label>
+                <label class="choice-card" for="mood-q6-d"><input type="radio" name="moodQ6" id="mood-q6-d" value="routine"><span class="choice-emoji">🔄</span><span class="choice-text">반복되는 일상</span></label>
+                <label class="choice-card" for="mood-q6-e"><input type="radio" name="moodQ6" id="mood-q6-e" value="self"><span class="choice-emoji">💔</span><span class="choice-text">나 자신에 대한 실망</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 7</div>
+              <label class="question-label">오늘 나에게 선물하고 싶은 감각적 경험은?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="mood-q7-a"><input type="radio" name="moodQ7" id="mood-q7-a" value="bath"><span class="choice-emoji">🛁</span><span class="choice-text">따뜻한 목욕과 아로마</span></label>
+                <label class="choice-card" for="mood-q7-b"><input type="radio" name="moodQ7" id="mood-q7-b" value="food"><span class="choice-emoji">🍜</span><span class="choice-text">맛있는 음식 혼자</span></label>
+                <label class="choice-card" for="mood-q7-c"><input type="radio" name="moodQ7" id="mood-q7-c" value="walk"><span class="choice-emoji">🚶</span><span class="choice-text">핸드폰 없이 긴 산책</span></label>
+                <label class="choice-card" for="mood-q7-d"><input type="radio" name="moodQ7" id="mood-q7-d" value="movie"><span class="choice-emoji">🎬</span><span class="choice-text">좋아하는 영화 다시보기</span></label>
+                <label class="choice-card" for="mood-q7-e"><input type="radio" name="moodQ7" id="mood-q7-e" value="nothing"><span class="choice-emoji">😴</span><span class="choice-text">아무것도 안 하기</span></label>
+              </div>
+            </div>
+
+          </div><!-- /questions-mood -->
+
+          <!-- ========== 아로마 북 테라피 질문 ========== -->
+          <div id="questions-aroma" class="service-question-group">
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 1</div>
+              <label class="question-label">지치거나 여유가 필요할 때 주로 읽는 도서 장르는?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="aroma-q1-a"><input type="radio" name="aromaQ1" id="aroma-q1-a" value="novel"><span class="choice-emoji">📚</span><span class="choice-text">소설 / 시집</span></label>
+                <label class="choice-card" for="aroma-q1-b"><input type="radio" name="aromaQ1" id="aroma-q1-b" value="essay"><span class="choice-emoji">✍️</span><span class="choice-text">에세이</span></label>
+                <label class="choice-card" for="aroma-q1-c"><input type="radio" name="aromaQ1" id="aroma-q1-c" value="selfdev"><span class="choice-emoji">📈</span><span class="choice-text">자기계발서</span></label>
+                <label class="choice-card" for="aroma-q1-d"><input type="radio" name="aromaQ1" id="aroma-q1-d" value="humanities"><span class="choice-emoji">🏛️</span><span class="choice-text">인문 / 철학 / 사회</span></label>
+                <label class="choice-card" for="aroma-q1-e"><input type="radio" name="aromaQ1" id="aroma-q1-e" value="magazine"><span class="choice-emoji">🗞️</span><span class="choice-text">잡지 / 화보집</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 2</div>
+              <label class="question-label">독서할 때 나의 호흡을 진정시켜 줄 향의 계열은?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="aroma-q2-a"><input type="radio" name="aromaQ2" id="aroma-q2-a" value="woody"><span class="choice-emoji">🌲</span><span class="choice-text">숲·피톤치드 우디향</span></label>
+                <label class="choice-card" for="aroma-q2-b"><input type="radio" name="aromaQ2" id="aroma-q2-b" value="citrus"><span class="choice-emoji">🍋</span><span class="choice-text">상큼한 시트러스향</span></label>
+                <label class="choice-card" for="aroma-q2-c"><input type="radio" name="aromaQ2" id="aroma-q2-c" value="floral"><span class="choice-emoji">🌸</span><span class="choice-text">화사한 플로럴향</span></label>
+                <label class="choice-card" for="aroma-q2-d"><input type="radio" name="aromaQ2" id="aroma-q2-d" value="musk"><span class="choice-emoji">🖤</span><span class="choice-text">묵직한 머스크향</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 3</div>
+              <label class="question-label">독서할 때 나의 자세는?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="aroma-q3-a"><input type="radio" name="aromaQ3" id="aroma-q3-a" value="bed"><span class="choice-emoji">🛏️</span><span class="choice-text">침대에 누워 옆으로</span></label>
+                <label class="choice-card" for="aroma-q3-b"><input type="radio" name="aromaQ3" id="aroma-q3-b" value="desk"><span class="choice-emoji">🪑</span><span class="choice-text">책상 앞 바르게 앉아</span></label>
+                <label class="choice-card" for="aroma-q3-c"><input type="radio" name="aromaQ3" id="aroma-q3-c" value="sofa"><span class="choice-emoji">🛋️</span><span class="choice-text">소파에 웅크리고</span></label>
+                <label class="choice-card" for="aroma-q3-d"><input type="radio" name="aromaQ3" id="aroma-q3-d" value="cafe"><span class="choice-emoji">☕</span><span class="choice-text">카페에서 음료와 함께</span></label>
+                <label class="choice-card" for="aroma-q3-e"><input type="radio" name="aromaQ3" id="aroma-q3-e" value="floor"><span class="choice-emoji">🧘</span><span class="choice-text">바닥에 쿠션 놓고</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 4</div>
+              <label class="question-label">독서 중 가장 집중을 방해하는 요소는?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="aroma-q4-a"><input type="radio" name="aromaQ4" id="aroma-q4-a" value="noise"><span class="choice-emoji">🔊</span><span class="choice-text">소음과 잡음</span></label>
+                <label class="choice-card" for="aroma-q4-b"><input type="radio" name="aromaQ4" id="aroma-q4-b" value="phone"><span class="choice-emoji">📱</span><span class="choice-text">스마트폰 알림</span></label>
+                <label class="choice-card" for="aroma-q4-c"><input type="radio" name="aromaQ4" id="aroma-q4-c" value="light"><span class="choice-emoji">💡</span><span class="choice-text">너무 밝거나 어두운 조명</span></label>
+                <label class="choice-card" for="aroma-q4-d"><input type="radio" name="aromaQ4" id="aroma-q4-d" value="posture"><span class="choice-emoji">😬</span><span class="choice-text">불편한 자세</span></label>
+                <label class="choice-card" for="aroma-q4-e"><input type="radio" name="aromaQ4" id="aroma-q4-e" value="thoughts"><span class="choice-emoji">💭</span><span class="choice-text">흐트러지는 생각들</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 5</div>
+              <label class="question-label">책 읽을 때 함께하는 음료는?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="aroma-q5-a"><input type="radio" name="aromaQ5" id="aroma-q5-a" value="chamomile"><span class="choice-emoji">🍵</span><span class="choice-text">따뜻한 허브티</span></label>
+                <label class="choice-card" for="aroma-q5-b"><input type="radio" name="aromaQ5" id="aroma-q5-b" value="coffee"><span class="choice-emoji">☕</span><span class="choice-text">아메리카노 / 핸드드립</span></label>
+                <label class="choice-card" for="aroma-q5-c"><input type="radio" name="aromaQ5" id="aroma-q5-c" value="latte"><span class="choice-emoji">🥛</span><span class="choice-text">따뜻한 라테</span></label>
+                <label class="choice-card" for="aroma-q5-d"><input type="radio" name="aromaQ5" id="aroma-q5-d" value="water"><span class="choice-emoji">💧</span><span class="choice-text">물 / 탄산수</span></label>
+                <label class="choice-card" for="aroma-q5-e"><input type="radio" name="aromaQ5" id="aroma-q5-e" value="cocoa"><span class="choice-emoji">🍫</span><span class="choice-text">달콤한 코코아</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 6</div>
+              <label class="question-label">나에게 독서란 어떤 의미인가요?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="aroma-q6-a"><input type="radio" name="aromaQ6" id="aroma-q6-a" value="travel"><span class="choice-emoji">🗺️</span><span class="choice-text">다른 세계로의 여행</span></label>
+                <label class="choice-card" for="aroma-q6-b"><input type="radio" name="aromaQ6" id="aroma-q6-b" value="mirror"><span class="choice-emoji">🪞</span><span class="choice-text">내면을 보는 거울</span></label>
+                <label class="choice-card" for="aroma-q6-c"><input type="radio" name="aromaQ6" id="aroma-q6-c" value="tool"><span class="choice-emoji">🛠️</span><span class="choice-text">지식을 쌓는 도구</span></label>
+                <label class="choice-card" for="aroma-q6-d"><input type="radio" name="aromaQ6" id="aroma-q6-d" value="comfort"><span class="choice-emoji">🫂</span><span class="choice-text">지친 하루의 위로</span></label>
+                <label class="choice-card" for="aroma-q6-e"><input type="radio" name="aromaQ6" id="aroma-q6-e" value="escape"><span class="choice-emoji">🚪</span><span class="choice-text">나를 잊는 탈출구</span></label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <div class="q-number-tag">Q 7</div>
+              <label class="question-label">독서를 마치고 나면 주로 남겨지는 감정은?</label>
+              <div class="choice-grid cols-2">
+                <label class="choice-card" for="aroma-q7-a"><input type="radio" name="aromaQ7" id="aroma-q7-a" value="reflection"><span class="choice-emoji">🌌</span><span class="choice-text">깊은 성찰과 여운</span></label>
+                <label class="choice-card" for="aroma-q7-b"><input type="radio" name="aromaQ7" id="aroma-q7-b" value="energy"><span class="choice-emoji">⚡</span><span class="choice-text">새로운 에너지와 활력</span></label>
+                <label class="choice-card" for="aroma-q7-c"><input type="radio" name="aromaQ7" id="aroma-q7-c" value="freedom"><span class="choice-emoji">🕊️</span><span class="choice-text">해방감과 자유로움</span></label>
+                <label class="choice-card" for="aroma-q7-d"><input type="radio" name="aromaQ7" id="aroma-q7-d" value="comfort"><span class="choice-emoji">🫶</span><span class="choice-text">위로받고 포근한 기분</span></label>
+                <label class="choice-card" for="aroma-q7-e"><input type="radio" name="aromaQ7" id="aroma-q7-e" value="excitement"><span class="choice-emoji">✨</span><span class="choice-text">설렘과 영감</span></label>
+              </div>
+            </div>
+
+          </div><!-- /questions-aroma -->
+
+          <div class="form-navigation">
+            <button type="button" class="prev-btn" onclick="goToStep('purpose')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 이전
+            </button>
+            <button type="button" class="next-btn" onclick="submitQuestions()">
+              결과 보기 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div><!-- /step-questions -->
+
+        <!-- ===== STEP 3: 개인정보 입력 ===== -->
+        <div class="form-step" id="step-info">
+          <h3 class="step-title">신청자 정보 입력</h3>
+          <p class="step-subtitle">체험 안내 및 키트 발송을 위한 정보를 입력해 주세요.</p>
+
+          <div class="form-group">
+            <label for="user-name" class="control-label">이름 <span class="required-asterisk">*</span></label>
+            <input type="text" id="user-name" name="userName" class="form-control" placeholder="성함을 입력해 주세요 (예: 홍길동)" required autocomplete="name">
+            <div class="invalid-feedback" id="name-error">이름을 입력해 주세요.</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-half">
+              <label for="user-age" class="control-label">나이 <span class="required-asterisk">*</span> <span class="age-notice">(20~27세)</span></label>
+              <input type="number" id="user-age" name="userAge" class="form-control" placeholder="나이" min="20" max="27" inputmode="numeric" required>
+              <div class="invalid-feedback" id="age-error">20~27세 전용 프로그램입니다.</div>
+            </div>
+            <div class="form-group col-half">
+              <label for="user-phone" class="control-label">연락처 <span class="required-asterisk">*</span></label>
+              <input type="tel" id="user-phone" name="userPhone" class="form-control" placeholder="010-XXXX-XXXX" inputmode="tel" required>
+              <div class="invalid-feedback" id="phone-error">올바른 번호를 입력해 주세요.</div>
+            </div>
+          </div>
+
+          <div class="form-navigation">
+            <button type="button" class="prev-btn" onclick="goToStep('apply')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 이전
+            </button>
+            <button type="button" class="next-btn" onclick="submitInfo()">
+              다음 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 4: 동의 및 제출 ===== -->
+        <div class="form-step" id="step-consent">
+          <h3 class="step-title">마지막 단계</h3>
+          <p class="step-subtitle">개인정보 보호 방침을 확인하고 동의해 주세요.</p>
+
+          <div class="form-group">
+            <div class="terms-box">
+              <h4>[필수] 개인정보 수집·이용 동의</h4>
+              <ol>
+                <li><strong>수집 항목:</strong> 성명, 나이, 연락처, 서비스별 응답 데이터</li>
+                <li><strong>수집 목적:</strong> 힐링 키트(유언 페이퍼, 무드 조명 엽서, 아로마 롤온 오일) 제작·발송 및 본인 인증</li>
+                <li><strong>보유 기간:</strong> 체험 프로젝트 종료 후 3개월 보관 후 즉시 파기</li>
+                <li><strong>거부 권리:</strong> 동의 거부 시 체험단 선발 및 키트 발송이 제한됩니다.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="checkbox-container">
+            <label class="custom-checkbox-label" for="privacy-consent">
+              <input type="checkbox" id="privacy-consent" name="privacyConsent" required>
+              <span class="checkbox-box"></span>
+              <span class="checkbox-text">개인정보 수집 및 이용에 동의합니다. (필수)</span>
+            </label>
+            <div class="invalid-feedback" id="consent-error">필수 동의 항목을 체크해 주세요.</div>
+          </div>
+
+          <div class="form-navigation">
+            <button type="button" class="prev-btn" onclick="goToStep('info')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 이전
+            </button>
+            <button type="submit" class="submit-btn" id="submit-button">
+              신청 완료하기 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 5: 맞춤 힐링 분석 결과서 ===== -->
+        <div class="form-step success-step" id="step-result">
+          <div class="result-header">
+            <div class="result-type-badge" id="result-type-badge">유형 로딩 중...</div>
+            <h3 class="result-type-name" id="result-type-name">힐링 유형명</h3>
+            <p class="result-type-sub" id="result-type-sub">유형 설명</p>
+            <p class="result-greeting">
+              당신을 위한 맞춤 힐링 처방전이 도착했습니다 ✨
+            </p>
+          </div>
+
+          <div class="result-body-card" id="result-body-card">
+            <!-- Will Visual -->
+            <div id="visual-will" class="result-visual-item">
+              <div class="lp-player-wrapper">
+                <div class="lp-disc">
+                  <div class="lp-label"><span class="lp-label-title" id="lp-music-genre">인디 발라드</span></div>
+                </div>
+              </div>
+              <blockquote class="will-quote-box">
+                <span class="will-quote-mark">"</span>
+                <p class="will-quote-content" id="result-will-quote">마지막 한 마디</p>
+                <span class="will-quote-mark">"</span>
+              </blockquote>
+            </div>
+
+            <!-- Mood Visual -->
+            <div id="visual-mood" class="result-visual-item">
+              <div class="mood-orb-container">
+                <div class="mood-gradient-orb" id="mood-color-orb"></div>
+                <div class="mood-room-indicator">
+                  <span class="room-chip">오늘 날씨: <strong id="result-weather-val">—</strong></span>
+                  <span class="room-chip">선호 조도: <strong id="result-light-val">—</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Aroma Visual -->
+            <div id="visual-aroma" class="result-visual-item">
+              <div class="aroma-bottle-container">
+                <div class="aroma-bottle-graphic">
+                  <div class="bottle-cap"></div>
+                  <div class="bottle-neck"></div>
+                  <div class="bottle-body">
+                    <span class="bottle-label-text" id="bottle-book-genre">에세이</span>
+                    <span class="bottle-liquid-glow" id="bottle-liquid-color"></span>
+                  </div>
+                </div>
+                <div class="aroma-recipe">
+                  <div class="recipe-title">맞춤 아로마 조합 레시피</div>
+                  <div class="recipe-items" id="result-aroma-recipe-list"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Diagnosis -->
+            <div class="result-diagnosis-section">
+              <div class="diagnosis-header">📋 처방 분석 결과</div>
+              <p class="diagnosis-body-text" id="result-diagnosis-desc">분석 중...</p>
+            </div>
+
+            <!-- Kit -->
+            <div class="result-kit-section">
+              <div class="kit-header">📦 발송 예정 힐링 키트</div>
+              <div class="kit-grid" id="result-kit-list"></div>
+            </div>
+          </div>
+
+          <div class="success-actions">
+            <button type="button" class="submit-btn result-apply-btn" onclick="goToStep('apply')">🎁 이 결과로 체험단 신청하기</button>
+            <button type="button" class="restart-btn" onclick="restartSurvey()">다시 진단하기</button>
+          </div>
+        </div>
+
+        <!-- ===== STEP: 체험단 신청 안내 ===== -->
+        <div class="form-step" id="step-apply">
+          <div class="apply-content">
+            <div class="apply-badge">🎁 체험단 모집 중</div>
+            <h3 class="step-title">체험단 신청하기</h3>
+            <p class="step-subtitle">진단 결과에 딱 맞는 힐링 키트를 <strong>무료</strong>로 보내드려요.<br>아래 단계에서 정보를 남기면 체험단 선발 후 발송해 드립니다.</p>
+
+            <div class="apply-perks">
+              <div class="apply-perk">
+                <span class="perk-emoji">📦</span>
+                <div class="perk-text"><strong>맞춤 힐링 키트 무료 제공</strong><span>진단 유형별 오감 처방 키트를 집으로 보내드려요.</span></div>
+              </div>
+              <div class="apply-perk">
+                <span class="perk-emoji">🚚</span>
+                <div class="perk-text"><strong>전국 무료 배송</strong><span>선발되면 배송비 부담 없이 받아보실 수 있어요.</span></div>
+              </div>
+              <div class="apply-perk">
+                <span class="perk-emoji">🎙️</span>
+                <div class="perk-text"><strong>후기 인터뷰 참여 기회</strong><span>경험을 나누면 다음 시즌 우선 초대 혜택이 있어요.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-navigation">
+            <button type="button" class="prev-btn" onclick="goToStep('result')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 결과 다시 보기
+            </button>
+            <button type="button" class="next-btn" onclick="goToStep('info')">
+              신청 계속하기 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP: 신청 완료 ===== -->
+        <div class="form-step success-step" id="step-done">
+          <div class="done-content">
+            <div class="done-check">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            </div>
+            <h3 class="step-title">신청이 완료되었어요!</h3>
+            <p class="step-subtitle"><strong id="done-user-name">메이트</strong>님, 체험단 신청이 정상 접수되었습니다.<br>선발 결과와 키트 발송 안내는 입력하신 연락처로 보내드릴게요.</p>
+
+            <div class="success-actions">
+              <a href="interview.html" class="submit-btn result-apply-btn" style="text-decoration:none;">🎙️ 힐링 인터뷰 남기기</a>
+              <button type="button" class="restart-btn" onclick="restartSurvey()">처음부터 다시하기</button>
+              <a href="admin.html" class="dashboard-shortcut-btn">관리자 대시보드 →</a>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <a href="admin.html" class="floating-admin-shortcut" title="관리자 콘솔">🔑</a>
+
+  <script src="app.js"></script>
+</body>
+</html>

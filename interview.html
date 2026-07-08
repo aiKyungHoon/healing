@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>힐링 인터뷰 — Healing.</title>
+  <meta name="description" content="힐링을 경험한 당신의 이야기를 인터뷰로 남겨주세요. 짧은 응답이 누군가에게 큰 위로가 됩니다.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Interview Page Specific ── */
+    .iv-body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 15% 12%, var(--accent-glow), transparent 34%),
+        radial-gradient(circle at 85% 80%, var(--primary-glow), transparent 36%),
+        linear-gradient(135deg, #07080d 0%, #11131c 46%, #08090f 100%);
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      color: #f7f2ea;
+    }
+
+    .iv-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(9, 10, 16, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .iv-nav-logo {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #fff;
+      text-decoration: none;
+    }
+    .iv-nav-logo span { color: var(--primary); }
+
+    .iv-nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      transition: all 0.2s ease;
+    }
+    .iv-nav-back:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+    .iv-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .iv-header { text-align: center; margin-bottom: 30px; }
+
+    .iv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 15px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e9ddff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .iv-header h1 {
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .iv-header h1 .grad {
+      background: linear-gradient(120deg, var(--primary), #fff2bf 74%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .iv-header p {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* Glass card */
+    .iv-card {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
+        var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--card-border);
+      border-radius: 26px;
+      padding: clamp(22px, 4vw, 40px);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    /* Sections */
+    .iv-section + .iv-section {
+      margin-top: 26px;
+      padding-top: 26px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .iv-q-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .iv-label {
+      display: block;
+      color: var(--white);
+      font-weight: 800;
+      font-size: 1.02rem;
+      line-height: 1.45;
+      margin-bottom: 6px;
+    }
+    .iv-hint {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      margin-bottom: 14px;
+    }
+
+    .iv-row {
+      display: grid;
+      grid-template-columns: 1fr 130px;
+      gap: 14px;
+    }
+    @media (max-width: 520px) { .iv-row { grid-template-columns: 1fr; } }
+
+    .iv-field-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .iv-req { color: var(--danger); }
+
+    /* Service pills */
+    .iv-pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .iv-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255, 255, 255, 0.11);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .iv-pill input { position: absolute; opacity: 0; pointer-events: none; }
+    .iv-pill:hover { border-color: rgba(255, 255, 255, 0.24); color: #fff; }
+    .iv-pill:has(input:checked) {
+      border-color: var(--pill-c);
+      background: var(--pill-bg);
+      color: #fff;
+      box-shadow: 0 6px 20px var(--pill-bg);
+      transform: translateY(-1px);
+    }
+    .iv-pill.will  { --pill-c: #a78bfa; --pill-bg: rgba(167, 139, 250, 0.20); }
+    .iv-pill.mood  { --pill-c: #fbbf24; --pill-bg: rgba(251, 191, 36, 0.20); }
+    .iv-pill.aroma { --pill-c: #34d399; --pill-bg: rgba(52, 211, 153, 0.20); }
+
+    /* Star rating */
+    .iv-stars { display: inline-flex; flex-direction: row-reverse; gap: 6px; }
+    .iv-stars input { position: absolute; opacity: 0; pointer-events: none; }
+    .iv-stars label {
+      font-size: 2rem;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.18);
+      cursor: pointer;
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+    .iv-stars label:hover,
+    .iv-stars label:hover ~ label,
+    .iv-stars input:checked ~ label {
+      color: #fbbf24;
+    }
+    .iv-stars label:hover { transform: scale(1.18); }
+    .iv-rating-caption {
+      margin-left: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      align-self: center;
+    }
+
+    /* Inputs */
+    .iv-input, .iv-textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.24);
+      color: var(--white);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .iv-textarea { min-height: 108px; resize: vertical; line-height: 1.6; }
+    .iv-input::placeholder, .iv-textarea::placeholder { color: rgba(255, 255, 255, 0.32); }
+    .iv-input:focus, .iv-textarea:focus {
+      border-color: var(--primary);
+      background: rgba(0, 0, 0, 0.34);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 16%, transparent);
+    }
+
+    .iv-count {
+      display: block;
+      text-align: right;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Consent */
+    .iv-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      margin-top: 4px;
+    }
+    .iv-consent input { position: absolute; opacity: 0; }
+    .iv-check {
+      width: 22px; height: 22px; flex: 0 0 auto;
+      border-radius: 7px;
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.26);
+      position: relative;
+      transition: all 0.18s ease;
+    }
+    .iv-consent input:checked + .iv-check {
+      background: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 14px var(--primary-glow);
+    }
+    .iv-consent input:checked + .iv-check::after {
+      content: '';
+      position: absolute; left: 7px; top: 3px;
+      width: 5px; height: 10px;
+      border: solid #fff; border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    .iv-consent-text { font-size: 0.86rem; color: var(--text-main); line-height: 1.5; }
+
+    /* Error */
+    .iv-error {
+      display: none;
+      color: var(--danger);
+      font-size: 0.8rem;
+      margin-top: 8px;
+    }
+    .iv-section.has-error .iv-error,
+    .has-error > .iv-error { display: block; }
+    .iv-section.has-error .iv-textarea,
+    .iv-section.has-error .iv-input { border-color: var(--danger); }
+
+    /* Submit */
+    .iv-submit {
+      width: 100%;
+      min-height: 56px;
+      margin-top: 30px;
+      border: 0;
+      border-radius: 16px;
+      color: #fff;
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      font-size: 1.02rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      box-shadow: 0 14px 34px var(--primary-glow);
+      cursor: pointer;
+      transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+    }
+    .iv-submit:hover { transform: translateY(-2px); filter: brightness(1.05); }
+    .iv-submit:disabled { cursor: default; transform: none; filter: none; }
+
+    .iv-note {
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    /* Thank-you screen */
+    .iv-thanks { display: none; text-align: center; padding: 20px 6px; }
+    .iv-thanks.show { display: block; animation: ivIn 0.5s cubic-bezier(0.22,1,0.36,1); }
+    @keyframes ivIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    .iv-thanks-emoji {
+      width: 84px; height: 84px; margin: 0 auto 20px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      font-size: 2.4rem;
+      background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--primary) 40%, transparent), transparent 70%);
+      box-shadow: 0 0 40px var(--primary-glow);
+    }
+    .iv-thanks h2 { font-size: 1.6rem; font-weight: 900; margin-bottom: 10px; }
+    .iv-thanks p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 26px; }
+    .iv-thanks-actions { display: flex; flex-direction: column; gap: 10px; max-width: 340px; margin: 0 auto; }
+    .iv-btn-ghost, .iv-btn-solid {
+      padding: 13px 20px; border-radius: 14px; font-weight: 800; font-size: 0.9rem;
+      text-decoration: none; text-align: center; cursor: pointer; border: 0;
+      font-family: inherit; transition: all 0.2s ease;
+    }
+    .iv-btn-solid { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; box-shadow: 0 10px 26px var(--primary-glow); }
+    .iv-btn-solid:hover { transform: translateY(-2px); }
+    .iv-btn-ghost { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.13); color: var(--text-main); }
+    .iv-btn-ghost:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* Recent interviews feed */
+    .iv-feed { margin-top: 46px; }
+    .iv-feed-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 18px;
+    }
+    .iv-feed-head h3 { font-size: 1.15rem; font-weight: 800; }
+    .iv-feed-count {
+      font-size: 0.76rem; font-weight: 700; color: var(--primary);
+      background: var(--accent-glow); border: 1px solid var(--card-border);
+      padding: 5px 12px; border-radius: 999px;
+    }
+    .iv-feed-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    @media (max-width: 560px) { .iv-feed-grid { grid-template-columns: 1fr; } }
+
+    .iv-story {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.035);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .iv-story:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.18); }
+
+    .iv-story-top { display: flex; align-items: center; gap: 10px; }
+    .iv-story-avatar {
+      width: 38px; height: 38px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      font-size: 1.05rem;
+    }
+    .iv-story-avatar.will  { background: rgba(167, 139, 250, 0.22); }
+    .iv-story-avatar.mood  { background: rgba(251, 191, 36, 0.22); }
+    .iv-story-avatar.aroma { background: rgba(52, 211, 153, 0.22); }
+    .iv-story-who { min-width: 0; }
+    .iv-story-name { font-size: 0.88rem; font-weight: 800; color: var(--white); }
+    .iv-story-meta { font-size: 0.72rem; color: var(--text-muted); }
+
+    .iv-story-stars { font-size: 0.82rem; letter-spacing: 1px; color: #fbbf24; }
+
+    .iv-story-quote {
+      font-size: 0.88rem; color: var(--text-main); line-height: 1.6;
+      display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .iv-story-tag {
+      align-self: flex-start;
+      font-size: 0.66rem; font-weight: 800; padding: 3px 9px; border-radius: 999px;
+    }
+    .iv-story-tag.will  { background: rgba(167, 139, 250, 0.18); color: #c4b5fd; }
+    .iv-story-tag.mood  { background: rgba(251, 191, 36, 0.18); color: #fcd34d; }
+    .iv-story-tag.aroma { background: rgba(52, 211, 153, 0.18); color: #6ee7b7; }
+
+    /* ── PDF 인쇄 전용 문서 ── */
+    .iv-print { display: none; }
+
+    @media print {
+      @page { margin: 16mm; }
+      .iv-nav, .iv-wrap { display: none !important; }
+      html, body.iv-body { background: #ffffff !important; }
+
+      .iv-print {
+        display: block !important;
+        color: #1f2430;
+        font-family: 'Noto Sans KR', sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .iv-print .pr-head {
+        display: flex; align-items: center; justify-content: space-between;
+        border-bottom: 2px solid #6d5ef0; padding-bottom: 12px; margin-bottom: 22px;
+      }
+      .iv-print .pr-logo { font-size: 1.4rem; font-weight: 800; color: #1f2430; }
+      .iv-print .pr-logo span { color: #6d5ef0; }
+      .iv-print .pr-date { font-size: 0.9rem; color: #6b7280; }
+      .iv-print .pr-title { font-size: 1.55rem; font-weight: 800; margin-bottom: 18px; }
+      .iv-print .pr-meta {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px;
+        padding: 16px 18px; margin-bottom: 24px;
+        background: #f5f4fc; border: 1px solid #e6e3f6; border-radius: 10px;
+        font-size: 0.95rem;
+      }
+      .iv-print .pr-meta b { color: #6d5ef0; margin-right: 10px; font-weight: 700; }
+      .iv-print .pr-stars { color: #f59e0b; letter-spacing: 2px; }
+      .iv-print .pr-qa { display: grid; gap: 18px; }
+      .iv-print .pr-item { break-inside: avoid; }
+      .iv-print .pr-q { font-weight: 800; color: #111827; margin-bottom: 7px; font-size: 1rem; }
+      .iv-print .pr-q .num {
+        display: inline-block; margin-right: 8px; padding: 1px 9px;
+        background: #6d5ef0; color: #fff; border-radius: 999px; font-size: 0.78rem;
+      }
+      .iv-print .pr-a {
+        font-size: 0.95rem; line-height: 1.75; color: #374151;
+        white-space: pre-wrap; padding-left: 14px; border-left: 3px solid #d9d5f3;
+      }
+      .iv-print .pr-foot {
+        margin-top: 32px; padding-top: 14px; border-top: 1px solid #e5e7eb;
+        font-size: 0.76rem; color: #9ca3af; text-align: center;
+      }
+    }
+  </style>
+</head>
+<body class="iv-body">
+
+  <!-- Nav -->
+  <nav class="iv-nav">
+    <a href="index.html" class="iv-nav-logo">Healing<span>.</span></a>
+    <a href="index.html" class="iv-nav-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      진단 폼으로
+    </a>
+  </nav>
+
+  <div class="iv-wrap">
+
+    <!-- Header -->
+    <header class="iv-header">
+      <div class="iv-badge">🎙️ 힐링 경험 인터뷰</div>
+      <h1>당신의 이야기를<br><span class="grad">인터뷰로 남겨주세요</span></h1>
+      <p>힐링을 경험한 짧은 소감이 비슷한 고민을 하는 누군가에게 큰 위로가 됩니다. 편하게, 솔직하게 답해주세요.</p>
+    </header>
+
+    <!-- Interview form -->
+    <main class="iv-card" id="iv-card">
+      <form id="iv-form" novalidate>
+
+        <!-- Basic info -->
+        <div class="iv-section" id="sec-basic">
+          <div class="iv-row">
+            <div>
+              <label class="iv-field-label" for="iv-name">이름 <span class="iv-req">*</span> <span style="font-weight:500;">(이니셜로 공개돼요)</span></label>
+              <input type="text" id="iv-name" class="iv-input" placeholder="예: 홍길동" maxlength="20" autocomplete="name">
+            </div>
+            <div>
+              <label class="iv-field-label" for="iv-age">나이</label>
+              <input type="number" id="iv-age" class="iv-input" placeholder="나이" min="20" max="27" inputmode="numeric">
+            </div>
+          </div>
+          <div class="iv-error" id="err-name">이름을 입력해 주세요.</div>
+        </div>
+
+        <!-- Service -->
+        <div class="iv-section" id="sec-service">
+          <label class="iv-field-label">참여한 힐링 종류 <span class="iv-req">*</span></label>
+          <div class="iv-pill-row">
+            <label class="iv-pill will" for="svc-will"><input type="radio" name="ivService" id="svc-will" value="will">📖 유언 프로젝트</label>
+            <label class="iv-pill mood" for="svc-mood"><input type="radio" name="ivService" id="svc-mood" value="mood">🌤️ 무드 진단</label>
+            <label class="iv-pill aroma" for="svc-aroma"><input type="radio" name="ivService" id="svc-aroma" value="aroma">🌿 아로마 북 테라피</label>
+          </div>
+          <div class="iv-error" id="err-service">참여한 힐링 종류를 선택해 주세요.</div>
+        </div>
+
+        <!-- Rating -->
+        <div class="iv-section" id="sec-rating">
+          <label class="iv-field-label">전반적인 만족도 <span class="iv-req">*</span></label>
+          <div style="display:flex; align-items:center;">
+            <div class="iv-stars">
+              <input type="radio" name="ivRating" id="star5" value="5"><label for="star5" title="최고예요">★</label>
+              <input type="radio" name="ivRating" id="star4" value="4"><label for="star4" title="좋아요">★</label>
+              <input type="radio" name="ivRating" id="star3" value="3"><label for="star3" title="보통이에요">★</label>
+              <input type="radio" name="ivRating" id="star2" value="2"><label for="star2" title="아쉬워요">★</label>
+              <input type="radio" name="ivRating" id="star1" value="1"><label for="star1" title="별로예요">★</label>
+            </div>
+            <span class="iv-rating-caption" id="rating-caption">별점을 선택해 주세요</span>
+          </div>
+          <div class="iv-error" id="err-rating">만족도를 선택해 주세요.</div>
+        </div>
+
+        <!-- Q1 -->
+        <div class="iv-section" id="sec-q1">
+          <span class="iv-q-index">Q 1</span>
+          <label class="iv-label" for="iv-q1">어떤 계기로 이 힐링 프로젝트에 참여하게 되셨나요? <span class="iv-req">*</span></label>
+          <span class="iv-hint">그때의 마음 상태나 상황을 편하게 적어주세요.</span>
+          <textarea id="iv-q1" class="iv-textarea" maxlength="300" placeholder="예: 번아웃이 심해서 뭐라도 나를 위한 시간을 갖고 싶었어요."></textarea>
+          <span class="iv-count"><span id="cnt-q1">0</span>/300</span>
+          <div class="iv-error" id="err-q1">이 질문에 답해주세요.</div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="iv-section" id="sec-q2">
+          <span class="iv-q-index">Q 2</span>
+          <label class="iv-label" for="iv-q2">체험 과정에서 가장 기억에 남는 순간은 언제였나요? <span class="iv-req">*</span></label>
+          <span class="iv-hint">사소한 장면도 좋아요. 그 순간의 감정까지 함께요.</span>
+          <textarea id="iv-q2" class="iv-textarea" maxlength="300" placeholder="예: 아로마 향을 맡으며 첫 문장을 읽던 순간, 어깨에 힘이 스르륵 풀렸어요."></textarea>
+          <span class="iv-count"><span id="cnt-q2">0</span>/300</span>
+          <div class="iv-error" id="err-q2">이 질문에 답해주세요.</div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="iv-section" id="sec-q3">
+          <span class="iv-q-index">Q 3</span>
+          <label class="iv-label" for="iv-q3">힐링 전과 후, 나에게 어떤 변화가 있었나요?</label>
+          <span class="iv-hint">작은 변화라도 괜찮아요. (선택)</span>
+          <textarea id="iv-q3" class="iv-textarea" maxlength="300" placeholder="예: 잠들기 전 스스로에게 다정해지는 시간이 생겼어요."></textarea>
+          <span class="iv-count"><span id="cnt-q3">0</span>/300</span>
+        </div>
+
+        <!-- Q4 -->
+        <div class="iv-section" id="sec-q4">
+          <span class="iv-q-index">Q 4</span>
+          <label class="iv-label" for="iv-q4">비슷한 고민을 가진 또래에게 한마디 한다면?</label>
+          <span class="iv-hint">추천의 말이나 응원 한 줄. (선택)</span>
+          <textarea id="iv-q4" class="iv-textarea" maxlength="200" placeholder="예: 나를 돌보는 데 거창한 이유는 필요 없더라고요. 한번 해봐요!"></textarea>
+          <span class="iv-count"><span id="cnt-q4">0</span>/200</span>
+        </div>
+
+        <!-- Consent -->
+        <div class="iv-section" id="sec-consent">
+          <label class="iv-consent" for="iv-consent-chk">
+            <input type="checkbox" id="iv-consent-chk">
+            <span class="iv-check"></span>
+            <span class="iv-consent-text">인터뷰 내용이 이니셜과 함께 힐링 아카이브에 공개되는 것에 동의합니다. (필수)</span>
+          </label>
+          <div class="iv-error" id="err-consent">공개 동의에 체크해 주세요.</div>
+        </div>
+
+        <button type="submit" class="iv-submit" id="iv-submit-btn">인터뷰 제출하기 🎙️</button>
+        <p class="iv-note">제출된 인터뷰는 이니셜(홍*동)로 아카이브에 표시됩니다.<br>소중한 이야기를 나눠주셔서 감사합니다.</p>
+      </form>
+
+      <!-- Thank-you -->
+      <div class="iv-thanks" id="iv-thanks">
+        <div class="iv-thanks-emoji">💛</div>
+        <h2>인터뷰가 등록되었어요</h2>
+        <p>당신의 이야기가 아카이브에 담겼습니다.<br>비슷한 고민을 하는 누군가에게 분명 힘이 될 거예요.</p>
+        <div class="iv-thanks-actions">
+          <button type="button" class="iv-btn-solid" onclick="downloadInterviewPDF()">📄 인터뷰 PDF로 저장</button>
+          <a href="index.html" class="iv-btn-ghost">힐링 진단 하러 가기</a>
+          <button type="button" class="iv-btn-ghost" onclick="resetInterview()">인터뷰 하나 더 남기기</button>
+          <a href="admin.html" class="iv-btn-ghost">관리자 대시보드 →</a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Recent interviews feed -->
+    <section class="iv-feed">
+      <div class="iv-feed-head">
+        <h3>💬 먼저 다녀간 사람들의 이야기</h3>
+        <span class="iv-feed-count"><span id="iv-feed-count">0</span>개의 인터뷰</span>
+      </div>
+      <div class="iv-feed-grid" id="iv-feed-grid"></div>
+    </section>
+
+  </div>
+
+  <!-- 인쇄(PDF) 전용 문서 — 화면에서는 숨김 -->
+  <div class="iv-print" id="iv-print" aria-hidden="true">
+    <div class="pr-head">
+      <div class="pr-logo">Healing<span>.</span></div>
+      <div class="pr-date" id="iv-p-date"></div>
+    </div>
+    <h1 class="pr-title">🎙️ 힐링 경험 인터뷰</h1>
+    <div class="pr-meta">
+      <div><b>이름</b><span id="iv-p-name"></span></div>
+      <div><b>나이</b><span id="iv-p-age"></span></div>
+      <div><b>참여 프로그램</b><span id="iv-p-service"></span></div>
+      <div><b>만족도</b><span id="iv-p-rating" class="pr-stars"></span></div>
+    </div>
+    <div class="pr-qa" id="iv-p-qa"></div>
+    <div class="pr-foot">© Healing. — 참여자 본인이 작성한 힐링 인터뷰 기록입니다.</div>
+  </div>
+
+  <script src="interview.js"></script>
+</body>
+</html>
