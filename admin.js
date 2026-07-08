@@ -502,19 +502,104 @@ function buildDiagnosisAnswerBlocks(sub) {
 }
 
 function buildResultBlock(sub) {
+  return buildAdminResultCard(sub);
+}
+
+function buildAdminResultCard(sub) {
   const result = getSubmissionResult(sub);
-  const title = `${result.emoji || ''} ${result.name}`;
-  const desc = result.desc;
-  const kits = Array.isArray(result.kits) && result.kits.length
-    ? `<div style="margin-top:10px;color:#fff;">${result.kits.map(k => `${k.emoji || '•'} ${escapeHTML(k.title || '')} - ${escapeHTML(k.desc || '')}`).join('<br>')}</div>`
-    : '';
+  const chips = getResultChips(sub);
+  const kits = Array.isArray(result.kits) ? result.kits : [];
 
   return `
-    <div class="dialog-q-box">
-      <div class="dialog-q-label">맞춤 힐링 분석 결과지</div>
-      <div class="dialog-q-val" style="color:#fff;"><strong>${escapeHTML(title)}</strong><br>${escapeHTML(desc)}${kits}</div>
+    <div class="admin-result-card">
+      <div class="admin-result-hero">
+        <div class="admin-result-visual">
+          ${buildResultVisual(sub, result)}
+        </div>
+        <div class="admin-result-summary">
+          <div class="admin-result-name">${escapeHTML(`${result.emoji || ''} ${result.name}`)}</div>
+          <div class="admin-result-sub">${escapeHTML(result.sub || SERVICE_KOREAN[sub.purpose] || '맞춤 힐링 결과')}</div>
+          <div class="admin-result-chips">
+            ${chips.map(chip => `
+              <span class="admin-result-chip">${escapeHTML(chip.label)}: <strong>${escapeHTML(chip.value)}</strong></span>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-result-section">
+        <h4>📋 처방 분석 결과</h4>
+        <p>${escapeHTML(result.desc)}</p>
+      </div>
+
+      <div class="admin-result-section">
+        <h4>📦 발송 예정 힐링 키트</h4>
+        <div class="admin-result-kits">
+          ${kits.length ? kits.map(kit => `
+            <div class="admin-result-kit">
+              <div class="admin-result-kit-icon">${escapeHTML(kit.emoji || '•')}</div>
+              <div>
+                <strong>${escapeHTML(kit.title || '힐링 키트')}</strong>
+                <span>${escapeHTML(kit.desc || '')}</span>
+              </div>
+            </div>
+          `).join('') : `
+            <div class="admin-result-kit">
+              <div class="admin-result-kit-icon">✨</div>
+              <div><strong>맞춤 힐링 키트</strong><span>선택 답변을 기준으로 구성됩니다.</span></div>
+            </div>
+          `}
+        </div>
+      </div>
     </div>
   `;
+}
+
+function buildResultVisual(sub, result) {
+  if (sub.purpose === 'mood') {
+    return `<div class="admin-result-orb" style="background:${escapeAttribute(getMoodOrbGradient(sub.answers || {}, result))};"></div>`;
+  }
+  if (sub.purpose === 'aroma') {
+    return '<div class="admin-result-bottle"></div>';
+  }
+  return '<div class="admin-result-book"></div>';
+}
+
+function getResultChips(sub) {
+  const answers = sub.answers || {};
+  if (sub.purpose === 'mood') {
+    return [
+      { label: '오늘 날씨', value: formatAnswerValue(answers.q1 || '미응답', sub.purpose, 'q1') },
+      { label: '선호 조도', value: formatAnswerValue(answers.q2 || '미응답', sub.purpose, 'q2') },
+      { label: '필요 감정', value: formatAnswerValue(answers.q3 || '미응답', sub.purpose, 'q3') }
+    ];
+  }
+  if (sub.purpose === 'aroma') {
+    return [
+      { label: '도서 장르', value: formatAnswerValue(answers.q1 || '미응답', sub.purpose, 'q1') },
+      { label: '선호 향', value: formatAnswerValue(answers.q2 || '미응답', sub.purpose, 'q2') },
+      { label: '독서 의미', value: formatAnswerValue(answers.q6 || answers.q3 || '미응답', sub.purpose, answers.q6 ? 'q6' : 'q3') }
+    ];
+  }
+  return [
+    { label: '마지막 한마디', value: formatAnswerValue(answers.q1 || '미응답', sub.purpose, 'q1') },
+    { label: '플레이리스트', value: formatAnswerValue(answers.q2 || '미응답', sub.purpose, 'q2') },
+    { label: '삶의 가치', value: formatAnswerValue(answers.q3 || '미응답', sub.purpose, 'q3') }
+  ];
+}
+
+function getMoodOrbGradient(answers, result) {
+  if (result.gradient) return result.gradient;
+  const weather = String(answers.q1 || '');
+  if (weather.includes('rain') || weather.includes('비')) return 'linear-gradient(135deg,#485563,#29323c)';
+  if (weather.includes('fog') || weather.includes('안개')) return 'linear-gradient(135deg,#e6e9f0,#94a3b8)';
+  if (weather.includes('cloud') || weather.includes('흐림')) return 'linear-gradient(135deg,#a1c4fd,#c2e9fb)';
+  if (weather.includes('sunshine') || weather.includes('햇살')) return 'linear-gradient(135deg,#ffd35c,#ff8540)';
+  return 'linear-gradient(135deg,#f59e0b,#d97706)';
+}
+
+function escapeAttribute(value) {
+  return String(value || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function getSubmissionResult(sub) {
@@ -601,17 +686,10 @@ window.downloadSubmissionPDF = function(id) {
   const sub = getDiagnosisSubmissions().find(s => String(s.id) === String(id));
   if (!sub) return;
 
-  const result = getSubmissionResult(sub);
   const answerSections = Object.entries(DIAGNOSIS_QUESTION_LABELS[sub.purpose] || {}).map(([key, label], idx) => ({
     title: `Q${idx + 1}. ${label}`,
     html: `<p class="pr-a">${escapeHTML(formatAnswerValue(sub.answers?.[key] || '미응답', sub.purpose, key))}</p>`
   }));
-
-  const resultHtml = `
-    <p><strong>${escapeHTML(`${result.emoji || ''} ${result.name}`)}</strong></p>
-    <p>${escapeHTML(result.desc)}</p>
-    ${Array.isArray(result.kits) && result.kits.length ? `<p>${result.kits.map(k => `${k.emoji || '•'} ${escapeHTML(k.title || '')} - ${escapeHTML(k.desc || '')}`).join('<br>')}</p>` : ''}
-  `;
 
   fillAdminPrint({
     title: '힐링 진단 결과지',
@@ -621,7 +699,7 @@ window.downloadSubmissionPDF = function(id) {
       ['연락처', sub.userPhone || '-'],
       ['참여 서비스', SERVICE_KOREAN[sub.purpose] || sub.purpose || '-']
     ],
-    sections: [{ title: '맞춤 힐링 분석 결과', type: 'result', html: resultHtml }, ...answerSections]
+    sections: [{ title: '맞춤 힐링 분석 결과', type: 'result', html: buildAdminResultCard(sub) }, ...answerSections]
   });
   window.print();
 };
