@@ -199,14 +199,34 @@ function buildPrintSheet(entry) {
   document.getElementById('iv-p-date').textContent =
     `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 
+  const result = buildInterviewResult(entry);
+  document.getElementById('iv-p-result').innerHTML = `
+    <h2>${escapeHtml(result.title)}</h2>
+    <p>${escapeHtml(result.desc)}</p>
+  `;
+
   const order = [['q1', 'Q1'], ['q2', 'Q2'], ['q3', 'Q3'], ['q4', 'Q4']];
   document.getElementById('iv-p-qa').innerHTML = order
-    .filter(([k]) => entry[k] && entry[k].trim())
     .map(([k, label]) => `
       <div class="pr-item">
         <div class="pr-q"><span class="num">${label}</span>${Q_LABELS[k]}</div>
-        <div class="pr-a">${escapeHtml(entry[k])}</div>
+        <div class="pr-a">${escapeHtml(entry[k]?.trim() || '미응답')}</div>
       </div>`).join('');
+}
+
+function buildInterviewResult(entry) {
+  const cfg = SERVICE_CONFIG[entry.service] || SERVICE_CONFIG.will;
+  const rating = Number(entry.rating || 0);
+  const tone = rating >= 5 ? '강한 만족과 몰입' : rating >= 4 ? '긍정적인 회복감' : rating >= 3 ? '차분한 관찰과 보완점' : '아쉬움이 남은 경험';
+  const serviceText = {
+    will: '삶의 우선순위와 전하지 못한 마음을 다시 바라본 기록입니다.',
+    mood: '감정 상태와 공간 감각을 연결해 나에게 맞는 쉼의 조건을 발견한 기록입니다.',
+    aroma: '향과 독서를 통해 몰입과 회복의 감각을 구체화한 기록입니다.'
+  }[entry.service] || '나에게 맞는 힐링 경험을 돌아본 기록입니다.';
+  return {
+    title: `${cfg.emoji} ${cfg.label} 인터뷰 결과지 · ${tone}`,
+    desc: `${serviceText} Q1~Q4 응답을 기준으로 보면, 이 인터뷰는 참여자가 어떤 계기로 힐링을 선택했고 어떤 순간을 가장 의미 있게 받아들였는지 보여주는 후기 자료입니다.`
+  };
 }
 
 function downloadInterviewPDF() {

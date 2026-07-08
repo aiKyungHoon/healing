@@ -94,6 +94,97 @@ let submissions = [];
 let currentFilter = 'all';
 let searchQuery = '';
 
+const SERVICE_KOREAN = {
+  will: '유언 프로젝트',
+  mood: '무드 진단',
+  aroma: '아로마 북 테라피'
+};
+
+const SERVICE_BADGE_CLASS = {
+  will: 'will-bg',
+  mood: 'mood-bg',
+  aroma: 'aroma-bg'
+};
+
+const DIAGNOSIS_QUESTION_LABELS = {
+  will: {
+    q1: '만약 내일이 삶의 마지막이라면, 소중한 사람에게 남길 첫 한 마디는?',
+    q2: '나의 장례식장에서 흐를 플레이리스트 장르는?',
+    q3: '삶에서 가장 소중한 것은 무엇인가요?',
+    q4: '가장 표현하지 못했던 감정은 무엇인가요?',
+    q5: '마지막 하루, 어떻게 보내고 싶으신가요?',
+    q6: '세상에 남기고 싶은 흔적은 무엇인가요?',
+    q7: '삶의 끝에서 가장 후회할 것 같은 것은?'
+  },
+  mood: {
+    q1: "오늘 나의 기분을 '날씨'로 표현한다면?",
+    q2: '하루를 마치고 방에 들어섰을 때 가장 편안한 조도는?',
+    q3: '지금 가장 필요한 감정 보충제는 무엇인가요?',
+    q4: '쉬고 싶을 때 가고 싶은 공간은?',
+    q5: '지금 배경으로 깔고 싶은 사운드는?',
+    q6: '요즘 나를 가장 지치게 하는 것은?',
+    q7: '오늘 나에게 선물하고 싶은 감각적 경험은?'
+  },
+  aroma: {
+    q1: '지치거나 여유가 필요할 때 주로 읽는 도서 장르는?',
+    q2: '독서할 때 나의 호흡을 진정시켜 줄 향의 계열은?',
+    q3: '독서할 때 나의 자세는?',
+    q4: '독서 중 가장 집중을 방해하는 요소는?',
+    q5: '책 읽을 때 함께하는 음료는?',
+    q6: '나에게 독서란 어떤 의미인가요?',
+    q7: '독서를 마치고 나면 주로 남겨지는 감정은?'
+  }
+};
+
+const ANSWER_LABELS = {
+  classic:'클래식 / 뉴에이지', indie:'잔잔한 인디 발라드', pop:'밝고 신나는 팝', jazz:'재즈 / 블루스', custom:'내가 직접 선곡',
+  relationship:'사람과의 관계', moments:'작은 순간들', freedom:'자유와 여행', records:'기록과 흔적', achievement:'나의 성취',
+  love:'사랑한다는 말', gratitude:'감사하다는 말', sorry:'미안하다는 말', proud:'자랑스럽다는 말', courage:'용기를 내지 못한 것',
+  family:'가족과 함께 식사', travel:'혼자 좋아하는 여행지로', write:'글쓰기와 기록으로', music:'음악 듣고 그림 그리며', volunteer:'낯선 이에게 봉사',
+  memory:'누군가의 마음속 기억', work:'글 / 작품 / 창작물', influence:'내가 준 긍정적 영향', peace:'조용한 평화',
+  unsaid:'말 못한 감정들', challenge:'하지 못한 도전들', relations:'소홀했던 관계들', alone:'나만의 시간 부족',
+  sunny:'구름 한 점 없는 맑음', cloudy:'차분하고 선선한 흐림', rain:'쓸쓸한 가을비', fog:'앞이 보이지 않는 안개', sunshine:'다정하게 부서지는 햇살',
+  indirect:'은은한 간접조명 (노을빛)', spotlight:'포근한 스탠드 스팟', natural:'창문으로 스며드는 자연광', dark:'완전한 암막 어둠',
+  energy:'에너지와 활력', connection:'포근한 연결감', ventilation:'가벼운 환기', calm:'깊은 고요와 안정', comfort:'감성적 위로',
+  nature:'자연 속 숲 / 바다', room:'아늑한 나만의 방', cafe:'조용한 카페 구석자리', empty:'아무것도 없는 빈 공간', people:'사랑하는 사람 옆',
+  lofi:'Lo-fi 음악', wind:'자연의 바람소리', tasks:'끝없는 할 일 목록', anxiety:'앞이 보이지 않는 불안', routine:'반복되는 일상', self:'나 자신에 대한 실망',
+  bath:'따뜻한 목욕과 아로마', food:'맛있는 음식 혼자', walk:'핸드폰 없이 긴 산책', movie:'좋아하는 영화 다시보기', nothing:'아무것도 안 하기',
+  novel:'소설 / 시집', essay:'에세이', selfdev:'자기계발서', humanities:'인문 / 철학 / 사회', magazine:'잡지 / 화보집',
+  woody:'숲·피톤치드 우디향', citrus:'상큼한 시트러스향', floral:'화사한 플로럴향', musk:'묵직한 머스크향',
+  bed:'침대에 누워 옆으로', desk:'책상 앞 바르게 앉아', sofa:'소파에 웅크리고', floor:'바닥에 쿠션 놓고',
+  noise:'소음과 잡음', phone:'스마트폰 알림', light:'너무 밝거나 어두운 조명', posture:'불편한 자세', thoughts:'흐트러지는 생각들',
+  chamomile:'따뜻한 허브티', coffee:'아메리카노 / 핸드드립', latte:'따뜻한 라테', water:'물 / 탄산수', cocoa:'달콤한 코코아',
+  mirror:'내면을 보는 거울', tool:'지식을 쌓는 도구', escape:'나를 잊는 탈출구',
+  reflection:'깊은 성찰과 여운', excitement:'설렘과 영감'
+};
+
+const INTERVIEW_QUESTION_LABELS = {
+  q1: '어떤 계기로 이 힐링 프로젝트에 참여하게 되셨나요?',
+  q2: '체험 과정에서 가장 기억에 남는 순간은 언제였나요?',
+  q3: '힐링 전과 후, 나에게 어떤 변화가 있었나요?',
+  q4: '비슷한 고민을 가진 또래에게 한마디 한다면?'
+};
+
+const CONTEXT_ANSWER_LABELS = {
+  'will.q3.freedom': '자유와 여행',
+  'will.q5.travel': '혼자 좋아하는 여행지로',
+  'will.q5.write': '글쓰기와 기록으로',
+  'will.q5.music': '음악 듣고 그림 그리며',
+  'will.q6.freedom': '자유로운 삶의 궤적',
+  'will.q7.moments': '흘려보낸 순간들',
+  'mood.q4.nature': '자연 속 숲 / 바다',
+  'mood.q4.room': '아늑한 나만의 방',
+  'mood.q4.cafe': '조용한 카페 구석자리',
+  'mood.q4.people': '사랑하는 사람 옆',
+  'mood.q5.rain': '빗소리 / 파도소리',
+  'mood.q6.people': '복잡한 인간관계',
+  'aroma.q3.cafe': '카페에서 음료와 함께',
+  'aroma.q5.water': '물 / 탄산수',
+  'aroma.q6.travel': '다른 세계로의 여행',
+  'aroma.q6.comfort': '지친 하루의 위로',
+  'aroma.q7.comfort': '위로받고 포근한 기분'
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   // Load database
   loadDatabase();
@@ -261,9 +352,11 @@ function renderTable() {
   // Apply logic filtering & query searching
   const filteredData = submissions.filter(sub => {
     const matchesFilter = (currentFilter === 'all' || sub.purpose === currentFilter);
+    const phone = String(sub.userPhone || '');
+    const name = String(sub.userName || sub.name || '');
     const matchesSearch = searchQuery === '' || 
-                          sub.userName.toLowerCase().includes(searchQuery) ||
-                          sub.userPhone.replace(/-/g, '').includes(searchQuery.replace(/-/g, ''));
+                          name.toLowerCase().includes(searchQuery) ||
+                          phone.replace(/-/g, '').includes(searchQuery.replace(/-/g, ''));
     
     return matchesFilter && matchesSearch;
   });
@@ -284,18 +377,6 @@ function renderTable() {
     return;
   }
   
-  // Mapping names
-  const serviceBadgeClass = {
-    'will': 'will-bg',
-    'mood': 'mood-bg',
-    'aroma': 'aroma-bg'
-  };
-  const serviceKorean = {
-    'will': '유언 프로젝트',
-    'mood': '무드 진단',
-    'aroma': '아로마 북 테라피'
-  };
-  
   filteredData.forEach(sub => {
     const row = document.createElement('tr');
     
@@ -306,19 +387,23 @@ function renderTable() {
     // Shorten answer for preview
     let previewText = '';
     if (sub.answers && sub.answers.q1) {
-      previewText = sub.answers.q1;
+      previewText = formatAnswerValue(sub.answers.q1);
       if (previewText.length > 25) previewText = previewText.substring(0, 22) + '...';
     }
+    const userName = sub.userName || sub.name || '익명';
+    const userAge = sub.userAge || sub.age || '-';
+    const userPhone = sub.userPhone || '-';
     
     row.innerHTML = `
       <td>${dateStr}</td>
-      <td style="font-weight:700;">${sub.userName}</td>
-      <td style="font-family:'Outfit';">${sub.userAge}세</td>
-      <td style="font-family:'Outfit';">${sub.userPhone}</td>
-      <td><span class="table-badge ${serviceBadgeClass[sub.purpose]}">${serviceKorean[sub.purpose]}</span></td>
-      <td class="text-muted" style="max-width: 250px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${previewText}</td>
+      <td style="font-weight:700;">${escapeHTML(userName)}</td>
+      <td style="font-family:'Outfit';">${escapeHTML(userAge)}${userAge === '-' ? '' : '세'}</td>
+      <td style="font-family:'Outfit';">${escapeHTML(userPhone)}</td>
+      <td><span class="table-badge ${SERVICE_BADGE_CLASS[sub.purpose] || ''}">${SERVICE_KOREAN[sub.purpose] || sub.purpose || '-'}</span></td>
+      <td class="text-muted" style="max-width: 250px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${escapeHTML(previewText)}</td>
       <td>
         <button class="btn-tbl-view" onclick="openDetailModal('${sub.id}')">상세</button>
+        <button class="btn-tbl-pdf" onclick="downloadSubmissionPDF('${sub.id}')">PDF</button>
         <button class="btn-tbl-del" onclick="deleteSubmission('${sub.id}')">삭제</button>
       </td>
     `;
@@ -328,63 +413,35 @@ function renderTable() {
 
 // Open detailed modal dialog for a specific response
 window.openDetailModal = function(id) {
-  const sub = submissions.find(s => s.id === id);
+  const sub = submissions.find(s => String(s.id) === String(id));
   if (!sub) return;
   
   const dialog = document.getElementById('detail-dialog');
   const backdrop = document.getElementById('dialog-backdrop');
   
   // Set modal text contents
-  document.getElementById('modal-name').textContent = sub.userName;
-  document.getElementById('modal-age').textContent = sub.userAge;
-  document.getElementById('modal-phone').textContent = sub.userPhone;
+  document.querySelector('#detail-dialog .dialog-header h3').textContent = '신청 정보 세부 정보';
+  document.getElementById('modal-name').textContent = sub.userName || sub.name || '익명';
+  document.getElementById('modal-age').textContent = sub.userAge || sub.age || '-';
+  document.getElementById('modal-phone').textContent = sub.userPhone || '-';
   
   // Format full date
   const dateObj = new Date(sub.submittedAt);
   document.getElementById('modal-date').textContent = dateObj.toLocaleString('ko-KR');
   
   // Badge styling mapping
-  const serviceKorean = {
-    'will': '유언 프로젝트 (your-text-project)',
-    'mood': '무드 진단 (moodinshop)',
-    'aroma': '아로마 북 테라피 (onepage-pj)'
-  };
   const badge = document.getElementById('modal-badge');
-  badge.textContent = serviceKorean[sub.purpose];
+  badge.textContent = SERVICE_KOREAN[sub.purpose] || sub.purpose || '-';
   badge.className = 'table-badge';
   
-  if (sub.purpose === 'will') badge.classList.add('will-bg');
-  else if (sub.purpose === 'mood') badge.classList.add('mood-bg');
-  else if (sub.purpose === 'aroma') badge.classList.add('aroma-bg');
+  if (SERVICE_BADGE_CLASS[sub.purpose]) badge.classList.add(SERVICE_BADGE_CLASS[sub.purpose]);
   
-  // Questions layout mappings
   const answersBox = document.getElementById('modal-answers-container');
-  answersBox.innerHTML = '';
-  
-  let q1Label = '';
-  let q2Label = '';
-  
-  if (sub.purpose === 'will') {
-    q1Label = "Q1. 삶의 마지막 순간에 소중한 사람에게 전하고 싶은 한마디는?";
-    q2Label = "Q2. 나의 장례식장을 위로할 선호 플레이리스트 장르는?";
-  } else if (sub.purpose === 'mood') {
-    q1Label = "Q1. 오늘 지친 기분을 표현하는 기상 날씨 상태는?";
-    q2Label = "Q2. 방 안에 들어섰을 때 심신 안정을 느끼는 희망 조도는?";
-  } else if (sub.purpose === 'aroma') {
-    q1Label = "Q1. 힐링이 필요할 때 오감을 열어줄 선호 도서 장르는?";
-    q2Label = "Q2. 활자에 스며들기 위해 함께 켜고 싶은 아로마 향의 종류는?";
+  answersBox.innerHTML = buildDiagnosisAnswerBlocks(sub);
+
+  if (sub.resultSnapshot || sub.resultKey) {
+    answersBox.innerHTML += buildResultBlock(sub);
   }
-  
-  answersBox.innerHTML = `
-    <div class="dialog-q-box">
-      <div class="dialog-q-label">${q1Label}</div>
-      <div class="dialog-q-val" style="color:#fff;">${sub.answers.q1}</div>
-    </div>
-    <div class="dialog-q-box">
-      <div class="dialog-q-label">${q2Label}</div>
-      <div class="dialog-q-val" style="color:#fff;">${sub.answers.q2}</div>
-    </div>
-  `;
   
   // Dynamically set CSS variables in dialog wrapper to match thematic color of submission
   const dynamicThemeHues = { 'will': '258', 'mood': '30', 'aroma': '125' };
@@ -399,7 +456,7 @@ window.openDetailModal = function(id) {
 window.deleteSubmission = function(id) {
   if (!confirm('해당 신청 정보를 영구적으로 삭제하시겠습니까?')) return;
   
-  submissions = submissions.filter(sub => sub.id !== id);
+  submissions = submissions.filter(sub => String(sub.id) !== String(id));
   localStorage.setItem('healing_submissions', JSON.stringify(submissions));
   updateDashboard();
 };
@@ -421,6 +478,95 @@ function clearDatabase() {
     updateDashboard();
   }
 }
+
+function buildDiagnosisAnswerBlocks(sub) {
+  const labels = DIAGNOSIS_QUESTION_LABELS[sub.purpose] || {};
+  const answers = sub.answers || {};
+  const keys = Object.keys(labels).length ? Object.keys(labels) : Object.keys(answers);
+
+  return keys.map((key, idx) => `
+    <div class="dialog-q-box">
+      <div class="dialog-q-label">Q${idx + 1}. ${escapeHTML(labels[key] || key)}</div>
+      <div class="dialog-q-val" style="color:#fff;">${escapeHTML(formatAnswerValue(answers[key] || '미응답', sub.purpose, key))}</div>
+    </div>
+  `).join('');
+}
+
+function buildResultBlock(sub) {
+  const result = sub.resultSnapshot || {};
+  const title = result.name ? `${result.emoji || ''} ${result.name}` : `결과 코드 ${sub.resultKey || '-'}`;
+  const desc = result.desc || '이전 버전에서 저장된 신청이라 상세 결과 설명 스냅샷이 없습니다.';
+  const kits = Array.isArray(result.kits) && result.kits.length
+    ? `<div style="margin-top:10px;color:#fff;">${result.kits.map(k => `${k.emoji || '•'} ${escapeHTML(k.title || '')} - ${escapeHTML(k.desc || '')}`).join('<br>')}</div>`
+    : '';
+
+  return `
+    <div class="dialog-q-box">
+      <div class="dialog-q-label">맞춤 힐링 분석 결과지</div>
+      <div class="dialog-q-val" style="color:#fff;"><strong>${escapeHTML(title)}</strong><br>${escapeHTML(desc)}${kits}</div>
+    </div>
+  `;
+}
+
+function buildInterviewResult(entry) {
+  const rating = Number(entry.rating || 0);
+  const tone = rating >= 5 ? '강한 만족과 몰입' : rating >= 4 ? '긍정적인 회복감' : rating >= 3 ? '차분한 관찰과 보완점' : '아쉬움이 남은 경험';
+  const serviceText = {
+    will: '삶의 우선순위와 전하지 못한 마음을 다시 바라본 기록입니다.',
+    mood: '감정 상태와 공간 감각을 연결해 나에게 맞는 쉼의 조건을 발견한 기록입니다.',
+    aroma: '향과 독서를 통해 몰입과 회복의 감각을 구체화한 기록입니다.'
+  }[entry.service] || '나에게 맞는 힐링 경험을 돌아본 기록입니다.';
+
+  return {
+    title: `${SERVICE_LABELS_ADMIN[entry.service] || entry.service || '힐링'} 인터뷰 결과지 · ${tone}`,
+    desc: `${serviceText} Q1~Q4 응답을 기준으로, 참여 계기와 가장 인상 깊었던 순간, 변화와 추천 메시지를 한 장의 인터뷰 결과지로 정리했습니다.`
+  };
+}
+
+function fillAdminPrint({ title, meta, sections }) {
+  const today = new Date();
+  document.getElementById('admin-p-date').textContent =
+    `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+  document.getElementById('admin-p-title').textContent = title;
+  document.getElementById('admin-p-meta').innerHTML = meta.map(([label, value]) => `
+    <div><b>${escapeHTML(label)}</b><span>${escapeHTML(value || '-')}</span></div>
+  `).join('');
+  document.getElementById('admin-p-body').innerHTML = sections.map(section => `
+    <section class="pr-section ${section.type || ''}">
+      <h2>${escapeHTML(section.title)}</h2>
+      ${section.html}
+    </section>
+  `).join('');
+}
+
+window.downloadSubmissionPDF = function(id) {
+  const sub = submissions.find(s => String(s.id) === String(id));
+  if (!sub) return;
+
+  const result = sub.resultSnapshot || {};
+  const answerSections = Object.entries(DIAGNOSIS_QUESTION_LABELS[sub.purpose] || {}).map(([key, label], idx) => ({
+    title: `Q${idx + 1}. ${label}`,
+    html: `<p class="pr-a">${escapeHTML(formatAnswerValue(sub.answers?.[key] || '미응답', sub.purpose, key))}</p>`
+  }));
+
+  const resultHtml = `
+    <p><strong>${escapeHTML(result.name ? `${result.emoji || ''} ${result.name}` : `결과 코드 ${sub.resultKey || '-'}`)}</strong></p>
+    <p>${escapeHTML(result.desc || '이전 버전에서 저장된 신청이라 상세 결과 설명 스냅샷이 없습니다.')}</p>
+    ${Array.isArray(result.kits) && result.kits.length ? `<p>${result.kits.map(k => `${k.emoji || '•'} ${escapeHTML(k.title || '')} - ${escapeHTML(k.desc || '')}`).join('<br>')}</p>` : ''}
+  `;
+
+  fillAdminPrint({
+    title: '힐링 진단 결과지',
+    meta: [
+      ['이름', sub.userName || '익명'],
+      ['나이', sub.userAge ? `${sub.userAge}세` : '-'],
+      ['연락처', sub.userPhone || '-'],
+      ['참여 서비스', SERVICE_KOREAN[sub.purpose] || sub.purpose || '-']
+    ],
+    sections: [{ title: '맞춤 힐링 분석 결과', type: 'result', html: resultHtml }, ...answerSections]
+  });
+  window.print();
+};
 
 // Utilities button: Export to CSV (Korean UTF-8 Bom fixed)
 function exportToCSV() {
@@ -481,7 +627,7 @@ function loadInterviewEntries() {
   if (countBadge) countBadge.textContent = `${stored.length}명`;
 
   if (stored.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#5a5869;padding:24px;">아직 등록된 인터뷰가 없습니다.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#5a5869;padding:24px;">아직 등록된 인터뷰가 없습니다.</td></tr>';
     return;
   }
 
@@ -491,16 +637,111 @@ function loadInterviewEntries() {
     const service = SERVICE_LABELS_ADMIN[entry.service] || entry.service;
     const name = entry.name || entry.userName || '익명';
     const rating = entry.rating ? '★'.repeat(entry.rating) + '☆'.repeat(5 - entry.rating) : '—';
-    const quote = (entry.q2 || entry.q1 || '—').replace(/</g, '&lt;');
+    const quote = escapeHTML(entry.q2 || entry.q1 || '—');
 
     return `<tr>
       <td style="color:#aaa7b5;font-size:0.82rem;">${dateStr}</td>
-      <td style="font-weight:600;">${name}</td>
+      <td style="font-weight:600;">${escapeHTML(name)}</td>
       <td style="color:#fbbf24;letter-spacing:1px;">${rating}</td>
       <td>${service}</td>
       <td style="color:#aaa7b5;font-size:0.85rem;max-width:320px;">${quote}</td>
+      <td>
+        <button class="btn-tbl-view" onclick="openInterviewDetail('${entry.id}')">상세</button>
+        <button class="btn-tbl-pdf" onclick="downloadInterviewPDFAdmin('${entry.id}')">PDF</button>
+        <button class="btn-tbl-del" onclick="deleteInterviewEntry('${entry.id}')">삭제</button>
+      </td>
     </tr>`;
   }).join('');
+}
+
+window.openInterviewDetail = function(id) {
+  const entries = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
+  const entry = entries.find(item => String(item.id) === String(id));
+  if (!entry) return;
+
+  const dialog = document.getElementById('detail-dialog');
+  const backdrop = document.getElementById('dialog-backdrop');
+  document.querySelector('#detail-dialog .dialog-header h3').textContent = '인터뷰 세부 정보';
+  document.getElementById('modal-name').textContent = entry.name || '익명';
+  document.getElementById('modal-age').textContent = entry.age || '-';
+  document.getElementById('modal-phone').textContent = '인터뷰 응답';
+  document.getElementById('modal-date').textContent = new Date(entry.ts || Date.now()).toLocaleString('ko-KR');
+
+  const badge = document.getElementById('modal-badge');
+  badge.textContent = SERVICE_LABELS_ADMIN[entry.service] || entry.service || '-';
+  badge.className = 'table-badge';
+  if (SERVICE_BADGE_CLASS[entry.service]) badge.classList.add(SERVICE_BADGE_CLASS[entry.service]);
+
+  const result = buildInterviewResult(entry);
+  document.getElementById('modal-answers-container').innerHTML = `
+    <div class="dialog-q-box">
+      <div class="dialog-q-label">인터뷰 결과지</div>
+      <div class="dialog-q-val" style="color:#fff;"><strong>${escapeHTML(result.title)}</strong><br>${escapeHTML(result.desc)}</div>
+    </div>
+    ${Object.entries(INTERVIEW_QUESTION_LABELS).map(([key, label], idx) => `
+      <div class="dialog-q-box">
+        <div class="dialog-q-label">Q${idx + 1}. ${escapeHTML(label)}</div>
+        <div class="dialog-q-val" style="color:#fff;">${escapeHTML(entry[key]?.trim() || '미응답')}</div>
+      </div>
+    `).join('')}
+  `;
+
+  dialog.classList.add('show');
+  backdrop.classList.add('show');
+};
+
+window.deleteInterviewEntry = function(id) {
+  if (!confirm('해당 인터뷰를 영구적으로 삭제하시겠습니까?')) return;
+  const entries = JSON.parse(localStorage.getItem('healing_interviews') || '[]')
+    .filter(item => String(item.id) !== String(id));
+  localStorage.setItem('healing_interviews', JSON.stringify(entries));
+
+  submissions = submissions.filter(sub => !(sub.source === 'interview' && String(sub.id) === String(id)));
+  localStorage.setItem('healing_submissions', JSON.stringify(submissions));
+  updateDashboard();
+  loadInterviewEntries();
+};
+
+window.downloadInterviewPDFAdmin = function(id) {
+  const entries = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
+  const entry = entries.find(item => String(item.id) === String(id));
+  if (!entry) return;
+
+  const result = buildInterviewResult(entry);
+  fillAdminPrint({
+    title: '힐링 경험 인터뷰 결과지',
+    meta: [
+      ['이름', entry.name || '익명'],
+      ['나이', entry.age ? `${entry.age}세` : '-'],
+      ['참여 프로그램', SERVICE_LABELS_ADMIN[entry.service] || entry.service || '-'],
+      ['만족도', entry.rating ? '★'.repeat(entry.rating) + '☆'.repeat(5 - entry.rating) : '-']
+    ],
+    sections: [
+      { title: result.title, type: 'result', html: `<p>${escapeHTML(result.desc)}</p>` },
+      ...Object.entries(INTERVIEW_QUESTION_LABELS).map(([key, label], idx) => ({
+        title: `Q${idx + 1}. ${label}`,
+        html: `<p class="pr-a">${escapeHTML(entry[key]?.trim() || '미응답')}</p>`
+      }))
+    ]
+  });
+  window.print();
+};
+
+function formatAnswerValue(value, purpose, key) {
+  if (value === undefined || value === null || value === '') return '미응답';
+  const scoped = CONTEXT_ANSWER_LABELS[`${purpose}.${key}.${value}`];
+  if (scoped) return scoped;
+  return ANSWER_LABELS[value] || String(value);
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, s => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[s]));
 }
 
 // Auto-load on DOMContentLoaded (append to existing listener)

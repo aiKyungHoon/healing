@@ -436,6 +436,12 @@
       }
       .iv-print .pr-meta b { color: #6d5ef0; margin-right: 10px; font-weight: 700; }
       .iv-print .pr-stars { color: #f59e0b; letter-spacing: 2px; }
+      .iv-print .pr-result {
+        margin-bottom: 24px; padding: 16px 18px; border-radius: 10px;
+        background: #fff7ed; border: 1px solid #fed7aa; color: #431407;
+      }
+      .iv-print .pr-result h2 { font-size: 1.05rem; margin-bottom: 8px; }
+      .iv-print .pr-result p { font-size: 0.92rem; line-height: 1.65; }
       .iv-print .pr-qa { display: grid; gap: 18px; }
       .iv-print .pr-item { break-inside: avoid; }
       .iv-print .pr-q { font-weight: 800; color: #111827; margin-bottom: 7px; font-size: 1rem; }
@@ -578,7 +584,6 @@
         <h2>인터뷰가 등록되었어요</h2>
         <p>당신의 이야기가 아카이브에 담겼습니다.<br>비슷한 고민을 하는 누군가에게 분명 힘이 될 거예요.</p>
         <div class="iv-thanks-actions">
-          <button type="button" class="iv-btn-solid" onclick="downloadInterviewPDF()">📄 인터뷰 PDF로 저장</button>
           <a href="index.html" class="iv-btn-ghost">힐링 진단 하러 가기</a>
           <button type="button" class="iv-btn-ghost" onclick="resetInterview()">인터뷰 하나 더 남기기</button>
           <a href="admin.html" class="iv-btn-ghost">관리자 대시보드 →</a>
@@ -610,6 +615,7 @@
       <div><b>참여 프로그램</b><span id="iv-p-service"></span></div>
       <div><b>만족도</b><span id="iv-p-rating" class="pr-stars"></span></div>
     </div>
+    <div class="pr-result" id="iv-p-result"></div>
     <div class="pr-qa" id="iv-p-qa"></div>
     <div class="pr-foot">© Healing. — 참여자 본인이 작성한 힐링 인터뷰 기록입니다.</div>
   </div>

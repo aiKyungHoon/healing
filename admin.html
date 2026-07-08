@@ -412,6 +412,24 @@
       color: #fff;
       border-color: #ef4444;
     }
+
+    .btn-tbl-pdf {
+      background-color: rgba(16, 185, 129, 0.08);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.18);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      margin-left: 6px;
+    }
+    .btn-tbl-pdf:hover {
+      background-color: #10b981;
+      color: #fff;
+      border-color: #10b981;
+    }
     
     .empty-state {
       text-align: center;
@@ -546,6 +564,93 @@
       font-weight: 600;
       line-height: 1.6;
       white-space: pre-wrap;
+    }
+
+    .admin-print {
+      display: none;
+    }
+
+    @media print {
+      @page { margin: 16mm; }
+      .app-header, .admin-container, .dialog-backdrop, .detail-dialog, .app-footer {
+        display: none !important;
+      }
+      html, body {
+        background: #fff !important;
+      }
+      .admin-print {
+        display: block !important;
+        color: #1f2937;
+        font-family: 'Noto Sans KR', sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .admin-print .pr-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #6d5ef0;
+      }
+      .admin-print .pr-logo {
+        font-size: 1.35rem;
+        font-weight: 900;
+      }
+      .admin-print .pr-logo span { color: #6d5ef0; }
+      .admin-print .pr-date { color: #6b7280; font-size: 0.88rem; }
+      .admin-print .pr-title {
+        font-size: 1.55rem;
+        font-weight: 900;
+        margin-bottom: 16px;
+      }
+      .admin-print .pr-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 22px;
+        margin-bottom: 20px;
+        padding: 16px 18px;
+        background: #f5f4fc;
+        border: 1px solid #e6e3f6;
+        border-radius: 10px;
+      }
+      .admin-print .pr-meta b {
+        color: #6d5ef0;
+        margin-right: 10px;
+      }
+      .admin-print .pr-section {
+        break-inside: avoid;
+        margin-bottom: 18px;
+        padding: 16px 18px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+      }
+      .admin-print .pr-section.result {
+        background: #fff7ed;
+        border-color: #fed7aa;
+      }
+      .admin-print .pr-section h2 {
+        font-size: 1.05rem;
+        margin-bottom: 8px;
+      }
+      .admin-print .pr-section p,
+      .admin-print .pr-a {
+        line-height: 1.75;
+        white-space: pre-wrap;
+      }
+      .admin-print .pr-q {
+        font-weight: 900;
+        margin-bottom: 6px;
+      }
+      .admin-print .pr-q .num {
+        display: inline-block;
+        margin-right: 8px;
+        padding: 1px 9px;
+        border-radius: 999px;
+        background: #6d5ef0;
+        color: #fff;
+        font-size: 0.78rem;
+      }
     }
 
     @media (max-width: 1024px) {
@@ -771,10 +876,11 @@
               <th>만족도</th>
               <th>참여 서비스</th>
               <th>인터뷰 내용</th>
+              <th>관리</th>
             </tr>
           </thead>
           <tbody id="map-entries-body">
-            <tr><td colspan="5" style="text-align:center;color:#5a5869;padding:24px;">아직 등록된 인터뷰가 없습니다.</td></tr>
+            <tr><td colspan="6" style="text-align:center;color:#5a5869;padding:24px;">아직 등록된 인터뷰가 없습니다.</td></tr>
           </tbody>
         </table>
       </div>
@@ -825,6 +931,16 @@
       </div>
     </div>
   </dialog>
+
+  <div class="admin-print" id="admin-print" aria-hidden="true">
+    <div class="pr-head">
+      <div class="pr-logo">Healing<span>.</span></div>
+      <div class="pr-date" id="admin-p-date"></div>
+    </div>
+    <h1 class="pr-title" id="admin-p-title">PDF 문서</h1>
+    <div class="pr-meta" id="admin-p-meta"></div>
+    <div id="admin-p-body"></div>
+  </div>
 
   <!-- Footer -->
   <footer class="app-footer">

@@ -708,11 +708,21 @@ function finalizeSubmission(e) {
   document.getElementById('consent-error').style.display = 'none';
   document.querySelector('.checkbox-container')?.classList.remove('has-error');
 
+  const result = RESULT_DATA[surveyState.resultKey] || null;
   const submission = {
     id: Date.now(),
     source: 'diagnosis',
     purpose: surveyState.purpose,
     resultKey: surveyState.resultKey,
+    resultSnapshot: result ? {
+      emoji: result.emoji,
+      name: result.name,
+      sub: result.sub,
+      desc: result.desc,
+      color: result.color,
+      gradient: result.gradient,
+      kits: result.kits
+    } : null,
     userName: document.getElementById('user-name').value.trim(),
     userAge: document.getElementById('user-age').value,
     userPhone: document.getElementById('user-phone').value,
