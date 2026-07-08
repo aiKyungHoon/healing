@@ -1,5 +1,5 @@
 /* ==========================================================================
-   interview.js — 참여자 셀프 인터뷰 폼 (LocalStorage)
+   interview.js — 참여자 셀프 인터뷰 폼 (Firestore + local fallback)
    ========================================================================== */
 
 const SERVICE_CONFIG = {
@@ -26,30 +26,6 @@ const Q_LABELS = {
 
 // 방금 제출한 인터뷰 (PDF 저장용)
 let lastInterview = null;
-
-// 샘플(시드) 인터뷰 — 아카이브가 비어보이지 않도록
-const SEED_INTERVIEWS = [
-  {
-    id: 'seed1', name: '김*우', service: 'aroma', rating: 5,
-    q1: '', q2: '아로마 향 오일과 함께 지정 도서를 읽으니 온전히 활자에 몰입되어 머릿속이 맑아졌어요.',
-    ts: '2026-07-02T09:00:00Z'
-  },
-  {
-    id: 'seed2', name: '이*진', service: 'will', rating: 5,
-    q1: '', q2: '마지막 한 마디를 떠올리는 순간 눈물이 났어요. 오늘 하루가 훨씬 더 소중하게 느껴졌습니다.',
-    ts: '2026-07-03T14:00:00Z'
-  },
-  {
-    id: 'seed3', name: '박*현', service: 'mood', rating: 4,
-    q1: '', q2: '내 감정에 딱 맞는 조명과 향을 처방받으니, 방에 들어서는 순간부터 마음이 편안해졌어요.',
-    ts: '2026-07-05T20:00:00Z'
-  },
-  {
-    id: 'seed4', name: '정*민', service: 'aroma', rating: 5,
-    q1: '', q2: '시트러스 향과 에세이 조합이 신의 한 수. 독서 시간이 매일 기다려집니다 🍋',
-    ts: '2026-07-06T13:00:00Z'
-  }
-];
 
 document.addEventListener('DOMContentLoaded', () => {
   initServicePills();
@@ -99,7 +75,7 @@ function setError(secId, show) {
 }
 function clearError(secId) { setError(secId, false); }
 
-function submitInterview(e) {
+async function submitInterview(e) {
   e.preventDefault();
 
   const name = document.getElementById('iv-name').value.trim();
@@ -142,24 +118,19 @@ function submitInterview(e) {
 
   lastInterview = entry;
 
-  // 인터뷰 전용 저장소
-  const interviews = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
-  interviews.unshift(entry);
-  localStorage.setItem('healing_interviews', JSON.stringify(interviews));
-
-  // 관리자 대시보드 호환 저장 (purpose / userName / answers.q1 / submittedAt)
-  const adminData = JSON.parse(localStorage.getItem('healing_submissions') || '[]');
-  adminData.unshift({
-    id: entry.id,
-    source: 'interview',
-    purpose: service,
-    userName: name,
-    userAge: age,
-    rating: entry.rating,
-    answers: { q1, q2, q3, q4 },
-    submittedAt: entry.ts
-  });
-  localStorage.setItem('healing_submissions', JSON.stringify(adminData));
+  try {
+    if (window.HealingDB) {
+      await window.HealingDB.addInterview(entry);
+    } else {
+      const interviews = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
+      interviews.unshift(entry);
+      localStorage.setItem('healing_interviews', JSON.stringify(interviews));
+    }
+  } catch (error) {
+    console.error('Failed to save interview.', error);
+    alert('인터뷰 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    return;
+  }
 
   showThanks();
   renderFeed();
@@ -239,18 +210,28 @@ function downloadInterviewPDF() {
 
 // ── 아카이브 피드 ──────────────────────────────────────────────
 
-function getAllInterviews() {
-  const stored = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
-  return [...stored, ...SEED_INTERVIEWS];
+async function getAllInterviews() {
+  if (window.HealingDB) return window.HealingDB.listInterviews();
+  return JSON.parse(localStorage.getItem('healing_interviews') || '[]');
 }
 
-function renderFeed() {
+async function renderFeed() {
   const grid = document.getElementById('iv-feed-grid');
   const countEl = document.getElementById('iv-feed-count');
   if (!grid) return;
 
-  const all = getAllInterviews();
+  let all = [];
+  try {
+    all = await getAllInterviews();
+  } catch (error) {
+    console.error('Failed to load interviews.', error);
+  }
   countEl.textContent = all.length;
+
+  if (all.length === 0) {
+    grid.innerHTML = '<p class="iv-empty">아직 등록된 인터뷰가 없습니다.</p>';
+    return;
+  }
 
   grid.innerHTML = all.slice(0, 12).map(iv => {
     const cfg = SERVICE_CONFIG[iv.service] || SERVICE_CONFIG.will;

@@ -1,0 +1,13 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /healing_submissions/{docId} {
+      allow read, write: if true;
+    }
+
+    match /healing_interviews/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

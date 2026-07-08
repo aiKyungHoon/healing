@@ -91,6 +91,7 @@ const INITIAL_MOCK_DATA = [
 ];
 
 let submissions = [];
+let interviewEntries = [];
 let currentFilter = 'all';
 let searchQuery = '';
 
@@ -231,18 +232,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Load submissions database from localStorage (or auto-seed)
-function loadDatabase() {
-  const localData = localStorage.getItem('healing_submissions');
-  
-  if (!localData || JSON.parse(localData).length === 0) {
-    // Database is empty. Seed initial mock data automatically for previewing
-    submissions = [...INITIAL_MOCK_DATA];
-    localStorage.setItem('healing_submissions', JSON.stringify(submissions));
-  } else {
-    submissions = JSON.parse(localData);
+// Load submissions database from Firestore. LocalStorage is used only as a fallback.
+async function loadDatabase() {
+  try {
+    submissions = window.HealingDB
+      ? await window.HealingDB.listSubmissions()
+      : JSON.parse(localStorage.getItem('healing_submissions') || '[]');
+  } catch (error) {
+    console.error('Failed to load submissions.', error);
+    submissions = JSON.parse(localStorage.getItem('healing_submissions') || '[]');
   }
-  
+
   updateDashboard();
 }
 
@@ -462,29 +462,54 @@ window.openDetailModal = function(id) {
 };
 
 // Delete single response
-window.deleteSubmission = function(id) {
+window.deleteSubmission = async function(id) {
   if (!confirm('해당 신청 정보를 영구적으로 삭제하시겠습니까?')) return;
-  
-  submissions = submissions.filter(sub => String(sub.id) !== String(id));
-  localStorage.setItem('healing_submissions', JSON.stringify(submissions));
+
+  try {
+    if (window.HealingDB) {
+      await window.HealingDB.deleteSubmission(id);
+    }
+    submissions = submissions.filter(sub => String(sub.id) !== String(id));
+    localStorage.setItem('healing_submissions', JSON.stringify(submissions));
+  } catch (error) {
+    console.error('Failed to delete submission.', error);
+    alert('삭제 중 오류가 발생했습니다.');
+    return;
+  }
   updateDashboard();
 };
 
 // Utilities button: Seed mock data
-function seedMockData() {
+async function seedMockData() {
   if (confirm('대시보드 통계 테스트를 위해 7건의 20대 MZ 신청자 예시 데이터를 생성하시겠습니까?')) {
-    submissions = [...INITIAL_MOCK_DATA, ...submissions];
-    localStorage.setItem('healing_submissions', JSON.stringify(submissions));
-    updateDashboard();
+    try {
+      if (window.HealingDB) {
+        await window.HealingDB.seedSubmissions(INITIAL_MOCK_DATA);
+      }
+      submissions = [...INITIAL_MOCK_DATA, ...submissions.filter(sub => !INITIAL_MOCK_DATA.some(mock => String(mock.id) === String(sub.id)))];
+      localStorage.setItem('healing_submissions', JSON.stringify(submissions));
+      updateDashboard();
+    } catch (error) {
+      console.error('Failed to seed mock data.', error);
+      alert('Mock 데이터 생성 중 오류가 발생했습니다.');
+    }
   }
 }
 
 // Utilities button: Clear database
-function clearDatabase() {
+async function clearDatabase() {
   if (confirm('저장된 모든 신청 메이트 응답 데이터를 영구적으로 초기화하시겠습니까?')) {
-    submissions = [];
-    localStorage.setItem('healing_submissions', JSON.stringify(submissions));
-    updateDashboard();
+    try {
+      if (window.HealingDB) {
+        await window.HealingDB.clearSubmissions();
+      }
+      submissions = [];
+      localStorage.setItem('healing_submissions', JSON.stringify(submissions));
+      updateDashboard();
+    } catch (error) {
+      console.error('Failed to clear submissions.', error);
+      alert('초기화 중 오류가 발생했습니다.');
+    }
   }
 }
 
@@ -754,21 +779,29 @@ const SERVICE_LABELS_ADMIN = {
   aroma: '🌿 아로마 북 테라피'
 };
 
-function loadInterviewEntries() {
-  const stored = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
+async function loadInterviewEntries() {
+  try {
+    interviewEntries = window.HealingDB
+      ? await window.HealingDB.listInterviews()
+      : JSON.parse(localStorage.getItem('healing_interviews') || '[]');
+  } catch (error) {
+    console.error('Failed to load interview entries.', error);
+    interviewEntries = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
+  }
+
   const tbody = document.getElementById('map-entries-body');
   const countBadge = document.getElementById('map-entry-count');
 
   if (!tbody) return;
 
-  if (countBadge) countBadge.textContent = `${stored.length}명`;
+  if (countBadge) countBadge.textContent = `${interviewEntries.length}명`;
 
-  if (stored.length === 0) {
+  if (interviewEntries.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#5a5869;padding:24px;">아직 등록된 인터뷰가 없습니다.</td></tr>';
     return;
   }
 
-  tbody.innerHTML = stored.map(entry => {
+  tbody.innerHTML = interviewEntries.map(entry => {
     const date = new Date(entry.ts || entry.submittedAt || Date.now());
     const dateStr = `${date.getMonth()+1}/${date.getDate()} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
     const service = SERVICE_LABELS_ADMIN[entry.service] || entry.service;
@@ -792,8 +825,7 @@ function loadInterviewEntries() {
 }
 
 window.openInterviewDetail = function(id) {
-  const entries = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
-  const entry = entries.find(item => String(item.id) === String(id));
+  const entry = interviewEntries.find(item => String(item.id) === String(id));
   if (!entry) return;
 
   const dialog = document.getElementById('detail-dialog');
@@ -828,21 +860,28 @@ window.openInterviewDetail = function(id) {
   backdrop.classList.add('show');
 };
 
-window.deleteInterviewEntry = function(id) {
+window.deleteInterviewEntry = async function(id) {
   if (!confirm('해당 인터뷰를 영구적으로 삭제하시겠습니까?')) return;
-  const entries = JSON.parse(localStorage.getItem('healing_interviews') || '[]')
-    .filter(item => String(item.id) !== String(id));
-  localStorage.setItem('healing_interviews', JSON.stringify(entries));
+  try {
+    if (window.HealingDB) {
+      await window.HealingDB.deleteInterview(id);
+      await window.HealingDB.deleteSubmission(id);
+    }
+    interviewEntries = interviewEntries.filter(item => String(item.id) !== String(id));
+    localStorage.setItem('healing_interviews', JSON.stringify(interviewEntries));
 
-  submissions = submissions.filter(sub => !(sub.source === 'interview' && String(sub.id) === String(id)));
-  localStorage.setItem('healing_submissions', JSON.stringify(submissions));
-  updateDashboard();
-  loadInterviewEntries();
+    submissions = submissions.filter(sub => !(sub.source === 'interview' && String(sub.id) === String(id)));
+    localStorage.setItem('healing_submissions', JSON.stringify(submissions));
+    updateDashboard();
+    loadInterviewEntries();
+  } catch (error) {
+    console.error('Failed to delete interview.', error);
+    alert('인터뷰 삭제 중 오류가 발생했습니다.');
+  }
 };
 
 window.downloadInterviewPDFAdmin = function(id) {
-  const entries = JSON.parse(localStorage.getItem('healing_interviews') || '[]');
-  const entry = entries.find(item => String(item.id) === String(id));
+  const entry = interviewEntries.find(item => String(item.id) === String(id));
   if (!entry) return;
 
   const result = buildInterviewResult(entry);

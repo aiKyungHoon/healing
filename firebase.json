@@ -1,0 +1,34 @@
+{
+  "hosting": {
+    "site": "healing-f581d",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "firestore.rules",
+      "firebase-debug.log",
+      ".firebaserc",
+      ".firebase/**",
+      ".git/**",
+      ".github/**",
+      ".claude/**",
+      ".codex/**",
+      ".agents/**",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(html|js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

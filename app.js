@@ -696,7 +696,7 @@ function gatherAnswers(purpose) {
 }
 
 // 동의 단계 제출 → 저장 후 완료 화면
-function finalizeSubmission(e) {
+async function finalizeSubmission(e) {
   if (e) e.preventDefault();
 
   const consent = document.getElementById('privacy-consent');
@@ -730,9 +730,19 @@ function finalizeSubmission(e) {
     submittedAt: new Date().toISOString()
   };
 
-  const existing = JSON.parse(localStorage.getItem('healing_submissions') || '[]');
-  existing.unshift(submission);
-  localStorage.setItem('healing_submissions', JSON.stringify(existing));
+  try {
+    if (window.HealingDB) {
+      await window.HealingDB.addSubmission(submission);
+    } else {
+      const existing = JSON.parse(localStorage.getItem('healing_submissions') || '[]');
+      existing.unshift(submission);
+      localStorage.setItem('healing_submissions', JSON.stringify(existing));
+    }
+  } catch (error) {
+    console.error('Failed to save submission.', error);
+    alert('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    return;
+  }
 
   document.getElementById('done-user-name').textContent = submission.userName || '메이트';
   goToStep('done');
