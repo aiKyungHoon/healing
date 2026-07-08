@@ -241,14 +241,19 @@ function loadDatabase() {
   updateDashboard();
 }
 
+function getDiagnosisSubmissions() {
+  return submissions.filter(sub => sub.source !== 'interview');
+}
+
 // Update statistics and chart visualizers
 function updateDashboard() {
-  const total = submissions.length;
+  const diagnosisSubmissions = getDiagnosisSubmissions();
+  const total = diagnosisSubmissions.length;
   document.getElementById('stat-total').textContent = total;
   
   // Service count calculation
   const counts = { will: 0, mood: 0, aroma: 0 };
-  submissions.forEach(sub => {
+  diagnosisSubmissions.forEach(sub => {
     if (counts[sub.purpose] !== undefined) {
       counts[sub.purpose]++;
     }
@@ -321,7 +326,7 @@ function renderDonutChart(counts, total) {
 function renderAgeBarChart() {
   const ageCounts = { 20: 0, 21: 0, 22: 0, 23: 0, 24: 0, 25: 0, 26: 0, 27: 0 };
   
-  submissions.forEach(sub => {
+  getDiagnosisSubmissions().forEach(sub => {
     const age = sub.userAge;
     if (ageCounts[age] !== undefined) {
       ageCounts[age]++;
@@ -350,7 +355,7 @@ function renderTable() {
   tbody.innerHTML = '';
   
   // Apply logic filtering & query searching
-  const filteredData = submissions.filter(sub => {
+  const filteredData = getDiagnosisSubmissions().filter(sub => {
     const matchesFilter = (currentFilter === 'all' || sub.purpose === currentFilter);
     const phone = String(sub.userPhone || '');
     const name = String(sub.userName || sub.name || '');
@@ -413,7 +418,7 @@ function renderTable() {
 
 // Open detailed modal dialog for a specific response
 window.openDetailModal = function(id) {
-  const sub = submissions.find(s => String(s.id) === String(id));
+  const sub = getDiagnosisSubmissions().find(s => String(s.id) === String(id));
   if (!sub) return;
   
   const dialog = document.getElementById('detail-dialog');
@@ -540,7 +545,7 @@ function fillAdminPrint({ title, meta, sections }) {
 }
 
 window.downloadSubmissionPDF = function(id) {
-  const sub = submissions.find(s => String(s.id) === String(id));
+  const sub = getDiagnosisSubmissions().find(s => String(s.id) === String(id));
   if (!sub) return;
 
   const result = sub.resultSnapshot || {};
@@ -570,7 +575,8 @@ window.downloadSubmissionPDF = function(id) {
 
 // Utilities button: Export to CSV (Korean UTF-8 Bom fixed)
 function exportToCSV() {
-  if (submissions.length === 0) {
+  const diagnosisSubmissions = getDiagnosisSubmissions();
+  if (diagnosisSubmissions.length === 0) {
     alert('다운로드할 신청 데이터가 존재하지 않습니다.');
     return;
   }
@@ -580,7 +586,7 @@ function exportToCSV() {
   // Header row
   let csvContent = "신청일시,이름,나이,연락처,선택 서비스,사전답변Q1,사전답변Q2\n";
   
-  submissions.forEach(sub => {
+  diagnosisSubmissions.forEach(sub => {
     const date = new Date(sub.submittedAt).toLocaleString('ko-KR');
     // Escape double quotes inside values
     const escape = val => `"${String(val).replace(/"/g, '""')}"`;
